@@ -10,7 +10,7 @@ export function searchCatalog(catalog: readonly Song[], query: string, limit = 2
   const key = normalizeSearchText(query);
   if (!key) return [];
   return catalog.flatMap(song => {
-    const fields = [song.title, song.artist, ...(song.aliases ?? [])].map(normalizeSearchText);
+    const fields = [song.title, song.titleKo ?? "", song.artist, ...(song.aliases ?? [])].map(normalizeSearchText);
     const exact = fields.some(field=>field===key);
     const prefix = fields.some(field=>field.startsWith(key));
     const contains = fields.some(field=>field.includes(key));

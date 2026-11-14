@@ -6,6 +6,8 @@ export type RatingKind = "seed" | "love" | "like" | "neutral" | "dislike" | "ski
 export interface Song {
     id: string;
     title: string;
+    /** Korean display name (translation or commonly used transliteration), if available. */
+    titleKo?: string | null;
     artist: string;
     aliases?: string[];
     domains: Domain[];

@@ -9,7 +9,7 @@ export function searchCatalog(catalog, query, limit = 20) {
     if (!key)
         return [];
     return catalog.flatMap(song => {
-        const fields = [song.title, song.artist, ...(song.aliases ?? [])].map(normalizeSearchText);
+        const fields = [song.title, song.titleKo ?? "", song.artist, ...(song.aliases ?? [])].map(normalizeSearchText);
         const exact = fields.some(field => field === key);
         const prefix = fields.some(field => field.startsWith(key));
         const contains = fields.some(field => field.includes(key));

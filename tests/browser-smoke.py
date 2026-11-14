@@ -10,12 +10,14 @@ with sync_playwright() as p:
  print('initial url:',page.url,'heading:',page.locator('h1').first.inner_text(), 'errors:',errs)
  print('tiles',page.locator('.song-tile').count())
  page.locator('#song-search').fill('푸름과 여름')
- assert page.get_by_text('青と夏',exact=True).count()==1
+ assert page.get_by_text('青と夏 (푸름과 여름)',exact=True).count()==1
  page.locator('#song-search').fill('')
  for i in range(5): page.locator('.song-tile').nth(i).click()
  assert '5 / 10' in page.locator('.side-count').inner_text()
+ assert '(아이돌)' in page.locator('.selected-list').inner_text()
  page.screenshot(path=str(Path(__file__).resolve().parent.parent/'docs/desktop-select.png'),full_page=True)
  page.locator('.side-panel [data-action="start"]').click()
+ assert '(' in page.locator('.probe-title').inner_text() or page.locator('.probe-title').inner_text() in ['KICK BACK', 'Lemon','crossing field','SPECIALZ','Bling-Bang-Bang-Born','MEGALOVANIA','Hopes and Dreams','Greenpath','Resurrections','Rex Incognito','U.N. Owen Was Her?','Last Surprise','Unwelcome School','Weight of the World','Brave Shine']
  print('probe path',page.url,'heading',page.locator('h1').first.inner_text(), 'errors',errs)
  for i in range(10):
   assert page.get_by_text('이 곡은 얼마나 마음에 드나요?').count()==1

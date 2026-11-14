@@ -2,6 +2,7 @@ export const CATALOG = [
   {
     "id": "muse-001",
     "title": "アイドル",
+    "titleKo": "아이돌",
     "artist": "YOASOBI",
     "aliases": [
       "아이돌",
@@ -33,8 +34,10 @@ export const CATALOG = [
   {
     "id": "muse-002",
     "title": "夜に駆ける",
+    "titleKo": "밤을 달리다",
     "artist": "YOASOBI",
     "aliases": [
+      "밤을 달리다",
       "요루니카케루",
       "Racing into the Night",
       "요아소비"
@@ -63,6 +66,7 @@ export const CATALOG = [
   {
     "id": "muse-003",
     "title": "群青",
+    "titleKo": "군청",
     "artist": "YOASOBI",
     "aliases": [
       "군청",
@@ -93,6 +97,7 @@ export const CATALOG = [
   {
     "id": "muse-004",
     "title": "怪物",
+    "titleKo": "괴물",
     "artist": "YOASOBI",
     "aliases": [
       "괴물",
@@ -125,6 +130,7 @@ export const CATALOG = [
   {
     "id": "muse-005",
     "title": "勇者",
+    "titleKo": "용사",
     "artist": "YOASOBI",
     "aliases": [
       "용사",
@@ -157,8 +163,10 @@ export const CATALOG = [
   {
     "id": "muse-006",
     "title": "うっせぇわ",
+    "titleKo": "시끄러워",
     "artist": "Ado",
     "aliases": [
+      "시끄러워",
       "웃세와",
       "Usseewa",
       "아도"
@@ -187,8 +195,10 @@ export const CATALOG = [
   {
     "id": "muse-007",
     "title": "踊",
+    "titleKo": "춤",
     "artist": "Ado",
     "aliases": [
+      "춤",
       "오도",
       "Odo",
       "아도"
@@ -217,8 +227,10 @@ export const CATALOG = [
   {
     "id": "muse-008",
     "title": "新時代",
+    "titleKo": "새로운 시대",
     "artist": "Ado",
     "aliases": [
+      "새로운 시대",
       "신시대",
       "New Genesis",
       "아도"
@@ -248,6 +260,7 @@ export const CATALOG = [
   {
     "id": "muse-009",
     "title": "KICK BACK",
+    "titleKo": null,
     "artist": "米津玄師",
     "aliases": [
       "킥백",
@@ -279,6 +292,7 @@ export const CATALOG = [
   {
     "id": "muse-010",
     "title": "Lemon",
+    "titleKo": null,
     "artist": "米津玄師",
     "aliases": [
       "레몬",
@@ -309,8 +323,10 @@ export const CATALOG = [
   {
     "id": "muse-011",
     "title": "ピースサイン",
+    "titleKo": "피스 사인",
     "artist": "米津玄師",
     "aliases": [
+      "피스 사인",
       "피스사인",
       "Peace Sign"
     ],
@@ -339,6 +355,7 @@ export const CATALOG = [
   {
     "id": "muse-012",
     "title": "怪獣の花唄",
+    "titleKo": "괴수의 꽃노래",
     "artist": "Vaundy",
     "aliases": [
       "괴수의 꽃노래",
@@ -369,8 +386,10 @@ export const CATALOG = [
   {
     "id": "muse-013",
     "title": "踊り子",
+    "titleKo": "무희",
     "artist": "Vaundy",
     "aliases": [
+      "무희",
       "오도리코",
       "Odoriko",
       "바운디"
@@ -399,6 +418,7 @@ export const CATALOG = [
   {
     "id": "muse-014",
     "title": "青と夏",
+    "titleKo": "푸름과 여름",
     "artist": "Mrs. GREEN APPLE",
     "aliases": [
       "푸름과 여름",
@@ -429,6 +449,7 @@ export const CATALOG = [
   {
     "id": "muse-015",
     "title": "ライラック",
+    "titleKo": "라일락",
     "artist": "Mrs. GREEN APPLE",
     "aliases": [
       "라일락",
@@ -460,6 +481,7 @@ export const CATALOG = [
   {
     "id": "muse-016",
     "title": "廻廻奇譚",
+    "titleKo": "회회기담",
     "artist": "Eve",
     "aliases": [
       "회회기담",
@@ -491,6 +513,7 @@ export const CATALOG = [
   {
     "id": "muse-017",
     "title": "ドラマツルギー",
+    "titleKo": "드라마투르기",
     "artist": "Eve",
     "aliases": [
       "드라마투르기",
@@ -521,8 +544,10 @@ export const CATALOG = [
   {
     "id": "muse-018",
     "title": "ただ君に晴れ",
+    "titleKo": "그저 네게 맑은 날을",
     "artist": "ヨルシカ",
     "aliases": [
+      "그저 네게 맑은 날을",
       "그저 네게 맑아라",
       "Tada Kimi ni Hare",
       "Yorushika",
@@ -552,6 +577,7 @@ export const CATALOG = [
   {
     "id": "muse-019",
     "title": "花に亡霊",
+    "titleKo": "꽃에 망령",
     "artist": "ヨルシカ",
     "aliases": [
       "꽃에 망령",
@@ -583,8 +609,10 @@ export const CATALOG = [
   {
     "id": "muse-020",
     "title": "春泥棒",
+    "titleKo": "봄 도둑",
     "artist": "ヨルシカ",
     "aliases": [
+      "봄 도둑",
       "봄도둑",
       "Haru Dorobou",
       "Yorushika",
@@ -614,6 +642,7 @@ export const CATALOG = [
   {
     "id": "muse-021",
     "title": "秒針を噛む",
+    "titleKo": "초침을 깨물다",
     "artist": "ずっと真夜中でいいのに。",
     "aliases": [
       "초침을 깨물다",
@@ -645,8 +674,10 @@ export const CATALOG = [
   {
     "id": "muse-022",
     "title": "お勉強しといてよ",
+    "titleKo": "공부 좀 해둬",
     "artist": "ずっと真夜中でいいのに。",
     "aliases": [
+      "공부 좀 해둬",
       "공부해 둬",
       "Obenkyou Shitoiteyo",
       "ZUTOMAYO",
@@ -676,6 +707,7 @@ export const CATALOG = [
   {
     "id": "muse-023",
     "title": "紅蓮華",
+    "titleKo": "홍련화",
     "artist": "LiSA",
     "aliases": [
       "홍련화",
@@ -707,8 +739,10 @@ export const CATALOG = [
   {
     "id": "muse-024",
     "title": "炎",
+    "titleKo": "불꽃",
     "artist": "LiSA",
     "aliases": [
+      "불꽃",
       "호무라",
       "Homura",
       "리사"
@@ -738,6 +772,7 @@ export const CATALOG = [
   {
     "id": "muse-025",
     "title": "crossing field",
+    "titleKo": null,
     "artist": "LiSA",
     "aliases": [
       "크로싱 필드",
@@ -768,6 +803,7 @@ export const CATALOG = [
   {
     "id": "muse-026",
     "title": "残響散歌",
+    "titleKo": "잔향산가",
     "artist": "Aimer",
     "aliases": [
       "잔향산가",
@@ -799,6 +835,7 @@ export const CATALOG = [
   {
     "id": "muse-027",
     "title": "カタオモイ",
+    "titleKo": "짝사랑",
     "artist": "Aimer",
     "aliases": [
       "짝사랑",
@@ -829,6 +866,7 @@ export const CATALOG = [
   {
     "id": "muse-028",
     "title": "Brave Shine",
+    "titleKo": null,
     "artist": "Aimer",
     "aliases": [
       "브레이브 샤인",
@@ -859,6 +897,7 @@ export const CATALOG = [
   {
     "id": "muse-029",
     "title": "シュガーソングとビターステップ",
+    "titleKo": "슈가송과 비터스텝",
     "artist": "UNISON SQUARE GARDEN",
     "aliases": [
       "슈가송과 비터스텝",
@@ -889,6 +928,7 @@ export const CATALOG = [
   {
     "id": "muse-030",
     "title": "SPECIALZ",
+    "titleKo": null,
     "artist": "King Gnu",
     "aliases": [
       "스페셜즈",
@@ -919,6 +959,7 @@ export const CATALOG = [
   {
     "id": "muse-031",
     "title": "Bling-Bang-Bang-Born",
+    "titleKo": null,
     "artist": "Creepy Nuts",
     "aliases": [
       "블링 뱅 뱅 본",
@@ -949,6 +990,7 @@ export const CATALOG = [
   {
     "id": "muse-032",
     "title": "オトノケ",
+    "titleKo": "오토노케",
     "artist": "Creepy Nuts",
     "aliases": [
       "오토노케",
@@ -980,8 +1022,10 @@ export const CATALOG = [
   {
     "id": "muse-033",
     "title": "天体観測",
+    "titleKo": "천체 관측",
     "artist": "BUMP OF CHICKEN",
     "aliases": [
+      "천체 관측",
       "천체관측",
       "Tentai Kansoku"
     ],
@@ -1009,6 +1053,7 @@ export const CATALOG = [
   {
     "id": "muse-034",
     "title": "ヴァンパイア",
+    "titleKo": "뱀파이어",
     "artist": "DECO*27",
     "aliases": [
       "뱀파이어",
@@ -1039,8 +1084,10 @@ export const CATALOG = [
   {
     "id": "muse-035",
     "title": "ヒバナ",
+    "titleKo": "불꽃",
     "artist": "DECO*27",
     "aliases": [
+      "불꽃",
       "히바나",
       "Hibana",
       "데코니나"
@@ -1069,8 +1116,10 @@ export const CATALOG = [
   {
     "id": "muse-036",
     "title": "ラビットホール",
+    "titleKo": "토끼굴",
     "artist": "DECO*27",
     "aliases": [
+      "토끼굴",
       "래빗 홀",
       "Rabbit Hole",
       "데코니나"
@@ -1099,8 +1148,10 @@ export const CATALOG = [
   {
     "id": "muse-037",
     "title": "神っぽいな",
+    "titleKo": "신 같아",
     "artist": "ピノキオピー",
     "aliases": [
+      "신 같아",
       "신 같네",
       "Kamippoi na",
       "PinocchioP"
@@ -1129,8 +1180,10 @@ export const CATALOG = [
   {
     "id": "muse-038",
     "title": "転生林檎",
+    "titleKo": "환생 사과",
     "artist": "ピノキオピー",
     "aliases": [
+      "환생 사과",
       "전생사과",
       "Tensei Ringo",
       "PinocchioP"
@@ -1159,8 +1212,10 @@ export const CATALOG = [
   {
     "id": "muse-039",
     "title": "ローリンガール",
+    "titleKo": "구르는 소녀",
     "artist": "wowaka",
     "aliases": [
+      "구르는 소녀",
       "롤링걸",
       "Rolling Girl"
     ],
@@ -1188,8 +1243,10 @@ export const CATALOG = [
   {
     "id": "muse-040",
     "title": "メルト",
+    "titleKo": "녹아내리다",
     "artist": "ryo (supercell)",
     "aliases": [
+      "녹아내리다",
       "멜트",
       "Melt"
     ],
@@ -1217,8 +1274,10 @@ export const CATALOG = [
   {
     "id": "muse-041",
     "title": "アスノヨゾラ哨戒班",
+    "titleKo": "내일 밤하늘 초계반",
     "artist": "Orangestar",
     "aliases": [
+      "내일 밤하늘 초계반",
       "아스노요조라 초계반",
       "Asu no Yozora Shoukaihan"
     ],
@@ -1246,6 +1305,7 @@ export const CATALOG = [
   {
     "id": "muse-042",
     "title": "KING",
+    "titleKo": null,
     "artist": "Kanaria",
     "aliases": [
       "킹",
@@ -1275,6 +1335,7 @@ export const CATALOG = [
   {
     "id": "muse-043",
     "title": "カゲロウデイズ",
+    "titleKo": "아지랑이 데이즈",
     "artist": "じん",
     "aliases": [
       "아지랑이 데이즈",
@@ -1305,6 +1366,7 @@ export const CATALOG = [
   {
     "id": "muse-044",
     "title": "MEGALOVANIA",
+    "titleKo": null,
     "artist": "Toby Fox",
     "aliases": [
       "메갈로바니아",
@@ -1336,6 +1398,7 @@ export const CATALOG = [
   {
     "id": "muse-045",
     "title": "Hopes and Dreams",
+    "titleKo": null,
     "artist": "Toby Fox",
     "aliases": [
       "희망과 꿈",
@@ -1367,6 +1430,7 @@ export const CATALOG = [
   {
     "id": "muse-046",
     "title": "Greenpath",
+    "titleKo": null,
     "artist": "Christopher Larkin",
     "aliases": [
       "그린패스",
@@ -1397,6 +1461,7 @@ export const CATALOG = [
   {
     "id": "muse-047",
     "title": "Resurrections",
+    "titleKo": null,
     "artist": "Lena Raine",
     "aliases": [
       "셀레스트",
@@ -1426,6 +1491,7 @@ export const CATALOG = [
   {
     "id": "muse-048",
     "title": "Rex Incognito",
+    "titleKo": null,
     "artist": "HOYO-MiX",
     "aliases": [
       "렉스 인코그니토",
@@ -1457,6 +1523,7 @@ export const CATALOG = [
   {
     "id": "muse-049",
     "title": "U.N. Owen Was Her?",
+    "titleKo": null,
     "artist": "ZUN",
     "aliases": [
       "U.N. 오웬은 그녀인가",
@@ -1488,6 +1555,7 @@ export const CATALOG = [
   {
     "id": "muse-050",
     "title": "Last Surprise",
+    "titleKo": null,
     "artist": "Shoji Meguro",
     "aliases": [
       "라스트 서프라이즈",
@@ -1519,6 +1587,7 @@ export const CATALOG = [
   {
     "id": "muse-051",
     "title": "Unwelcome School",
+    "titleKo": null,
     "artist": "Mitsukiyo",
     "aliases": [
       "언웰컴 스쿨",
@@ -1550,6 +1619,7 @@ export const CATALOG = [
   {
     "id": "muse-052",
     "title": "Weight of the World",
+    "titleKo": null,
     "artist": "Keiichi Okabe",
     "aliases": [
       "세계의 무게",

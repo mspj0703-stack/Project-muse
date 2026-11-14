@@ -74,7 +74,7 @@ h3{letter-spacing:-.025em}
 .art-vocaloid{background:linear-gradient(135deg,#8fd6cd,#3a8d9f)}
 .art-game_ost{background:linear-gradient(135deg,#788fca,#4f567c)}
 .song-body{min-width:0;flex:1;display:flex;flex-direction:column;align-items:flex-start}
-.song-title{font-size:13px;font-weight:750;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-bottom:5px}
+.song-title{font-size:13px;font-weight:750;overflow-wrap:anywhere;line-height:1.5;margin-bottom:5px;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
 .song-artist{font-size:11px;color:#acb5bc;white-space:nowrap;text-overflow:ellipsis;overflow:hidden}
 .song-type{font-size:10px;color:#89959e;text-transform:uppercase;letter-spacing:.045em;margin-top:6px}
 .checkmark{width:25px;height:25px;flex:0 0 auto;border:1px solid #66727a;border-radius:50%;display:grid;place-items:center;color:transparent;font-size:14px}
@@ -141,7 +141,7 @@ h3{letter-spacing:-.025em}
 .rec-rank{font:800 12px ui-monospace,monospace;color:#a9b1b9;text-align:center}
 .rec-card .artwork{width:64px;height:64px}
 .rec-info{min-width:0}
-.rec-song{font-size:14px;font-weight:770;margin:0 0 5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.rec-song{font-size:14px;font-weight:770;margin:0 0 5px;overflow-wrap:anywhere;line-height:1.5}
 .rec-artist{color:#acb6bc;font-size:11px;margin:0 0 8px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .rec-reason{font-size:11px;color:#aabaaf;line-height:1.5}
 .rec-actions{display:flex;align-items:center;gap:6px;flex-wrap:wrap;justify-content:flex-end;max-width:215px}
@@ -324,7 +324,7 @@ function searchCatalog(catalog, query, limit = 20) {
     if (!key)
         return [];
     return catalog.flatMap(song => {
-        const fields = [song.title, song.artist, ...(song.aliases ?? [])].map(normalizeSearchText);
+        const fields = [song.title, song.titleKo ?? "", song.artist, ...(song.aliases ?? [])].map(normalizeSearchText);
         const exact = fields.some(field => field === key);
         const prefix = fields.some(field => field.startsWith(key));
         const contains = fields.some(field => field.includes(key));
@@ -457,6 +457,7 @@ const CATALOG = [
   {
     "id": "muse-001",
     "title": "アイドル",
+    "titleKo": "아이돌",
     "artist": "YOASOBI",
     "aliases": [
       "아이돌",
@@ -488,8 +489,10 @@ const CATALOG = [
   {
     "id": "muse-002",
     "title": "夜に駆ける",
+    "titleKo": "밤을 달리다",
     "artist": "YOASOBI",
     "aliases": [
+      "밤을 달리다",
       "요루니카케루",
       "Racing into the Night",
       "요아소비"
@@ -518,6 +521,7 @@ const CATALOG = [
   {
     "id": "muse-003",
     "title": "群青",
+    "titleKo": "군청",
     "artist": "YOASOBI",
     "aliases": [
       "군청",
@@ -548,6 +552,7 @@ const CATALOG = [
   {
     "id": "muse-004",
     "title": "怪物",
+    "titleKo": "괴물",
     "artist": "YOASOBI",
     "aliases": [
       "괴물",
@@ -580,6 +585,7 @@ const CATALOG = [
   {
     "id": "muse-005",
     "title": "勇者",
+    "titleKo": "용사",
     "artist": "YOASOBI",
     "aliases": [
       "용사",
@@ -612,8 +618,10 @@ const CATALOG = [
   {
     "id": "muse-006",
     "title": "うっせぇわ",
+    "titleKo": "시끄러워",
     "artist": "Ado",
     "aliases": [
+      "시끄러워",
       "웃세와",
       "Usseewa",
       "아도"
@@ -642,8 +650,10 @@ const CATALOG = [
   {
     "id": "muse-007",
     "title": "踊",
+    "titleKo": "춤",
     "artist": "Ado",
     "aliases": [
+      "춤",
       "오도",
       "Odo",
       "아도"
@@ -672,8 +682,10 @@ const CATALOG = [
   {
     "id": "muse-008",
     "title": "新時代",
+    "titleKo": "새로운 시대",
     "artist": "Ado",
     "aliases": [
+      "새로운 시대",
       "신시대",
       "New Genesis",
       "아도"
@@ -703,6 +715,7 @@ const CATALOG = [
   {
     "id": "muse-009",
     "title": "KICK BACK",
+    "titleKo": null,
     "artist": "米津玄師",
     "aliases": [
       "킥백",
@@ -734,6 +747,7 @@ const CATALOG = [
   {
     "id": "muse-010",
     "title": "Lemon",
+    "titleKo": null,
     "artist": "米津玄師",
     "aliases": [
       "레몬",
@@ -764,8 +778,10 @@ const CATALOG = [
   {
     "id": "muse-011",
     "title": "ピースサイン",
+    "titleKo": "피스 사인",
     "artist": "米津玄師",
     "aliases": [
+      "피스 사인",
       "피스사인",
       "Peace Sign"
     ],
@@ -794,6 +810,7 @@ const CATALOG = [
   {
     "id": "muse-012",
     "title": "怪獣の花唄",
+    "titleKo": "괴수의 꽃노래",
     "artist": "Vaundy",
     "aliases": [
       "괴수의 꽃노래",
@@ -824,8 +841,10 @@ const CATALOG = [
   {
     "id": "muse-013",
     "title": "踊り子",
+    "titleKo": "무희",
     "artist": "Vaundy",
     "aliases": [
+      "무희",
       "오도리코",
       "Odoriko",
       "바운디"
@@ -854,6 +873,7 @@ const CATALOG = [
   {
     "id": "muse-014",
     "title": "青と夏",
+    "titleKo": "푸름과 여름",
     "artist": "Mrs. GREEN APPLE",
     "aliases": [
       "푸름과 여름",
@@ -884,6 +904,7 @@ const CATALOG = [
   {
     "id": "muse-015",
     "title": "ライラック",
+    "titleKo": "라일락",
     "artist": "Mrs. GREEN APPLE",
     "aliases": [
       "라일락",
@@ -915,6 +936,7 @@ const CATALOG = [
   {
     "id": "muse-016",
     "title": "廻廻奇譚",
+    "titleKo": "회회기담",
     "artist": "Eve",
     "aliases": [
       "회회기담",
@@ -946,6 +968,7 @@ const CATALOG = [
   {
     "id": "muse-017",
     "title": "ドラマツルギー",
+    "titleKo": "드라마투르기",
     "artist": "Eve",
     "aliases": [
       "드라마투르기",
@@ -976,8 +999,10 @@ const CATALOG = [
   {
     "id": "muse-018",
     "title": "ただ君に晴れ",
+    "titleKo": "그저 네게 맑은 날을",
     "artist": "ヨルシカ",
     "aliases": [
+      "그저 네게 맑은 날을",
       "그저 네게 맑아라",
       "Tada Kimi ni Hare",
       "Yorushika",
@@ -1007,6 +1032,7 @@ const CATALOG = [
   {
     "id": "muse-019",
     "title": "花に亡霊",
+    "titleKo": "꽃에 망령",
     "artist": "ヨルシカ",
     "aliases": [
       "꽃에 망령",
@@ -1038,8 +1064,10 @@ const CATALOG = [
   {
     "id": "muse-020",
     "title": "春泥棒",
+    "titleKo": "봄 도둑",
     "artist": "ヨルシカ",
     "aliases": [
+      "봄 도둑",
       "봄도둑",
       "Haru Dorobou",
       "Yorushika",
@@ -1069,6 +1097,7 @@ const CATALOG = [
   {
     "id": "muse-021",
     "title": "秒針を噛む",
+    "titleKo": "초침을 깨물다",
     "artist": "ずっと真夜中でいいのに。",
     "aliases": [
       "초침을 깨물다",
@@ -1100,8 +1129,10 @@ const CATALOG = [
   {
     "id": "muse-022",
     "title": "お勉強しといてよ",
+    "titleKo": "공부 좀 해둬",
     "artist": "ずっと真夜中でいいのに。",
     "aliases": [
+      "공부 좀 해둬",
       "공부해 둬",
       "Obenkyou Shitoiteyo",
       "ZUTOMAYO",
@@ -1131,6 +1162,7 @@ const CATALOG = [
   {
     "id": "muse-023",
     "title": "紅蓮華",
+    "titleKo": "홍련화",
     "artist": "LiSA",
     "aliases": [
       "홍련화",
@@ -1162,8 +1194,10 @@ const CATALOG = [
   {
     "id": "muse-024",
     "title": "炎",
+    "titleKo": "불꽃",
     "artist": "LiSA",
     "aliases": [
+      "불꽃",
       "호무라",
       "Homura",
       "리사"
@@ -1193,6 +1227,7 @@ const CATALOG = [
   {
     "id": "muse-025",
     "title": "crossing field",
+    "titleKo": null,
     "artist": "LiSA",
     "aliases": [
       "크로싱 필드",
@@ -1223,6 +1258,7 @@ const CATALOG = [
   {
     "id": "muse-026",
     "title": "残響散歌",
+    "titleKo": "잔향산가",
     "artist": "Aimer",
     "aliases": [
       "잔향산가",
@@ -1254,6 +1290,7 @@ const CATALOG = [
   {
     "id": "muse-027",
     "title": "カタオモイ",
+    "titleKo": "짝사랑",
     "artist": "Aimer",
     "aliases": [
       "짝사랑",
@@ -1284,6 +1321,7 @@ const CATALOG = [
   {
     "id": "muse-028",
     "title": "Brave Shine",
+    "titleKo": null,
     "artist": "Aimer",
     "aliases": [
       "브레이브 샤인",
@@ -1314,6 +1352,7 @@ const CATALOG = [
   {
     "id": "muse-029",
     "title": "シュガーソングとビターステップ",
+    "titleKo": "슈가송과 비터스텝",
     "artist": "UNISON SQUARE GARDEN",
     "aliases": [
       "슈가송과 비터스텝",
@@ -1344,6 +1383,7 @@ const CATALOG = [
   {
     "id": "muse-030",
     "title": "SPECIALZ",
+    "titleKo": null,
     "artist": "King Gnu",
     "aliases": [
       "스페셜즈",
@@ -1374,6 +1414,7 @@ const CATALOG = [
   {
     "id": "muse-031",
     "title": "Bling-Bang-Bang-Born",
+    "titleKo": null,
     "artist": "Creepy Nuts",
     "aliases": [
       "블링 뱅 뱅 본",
@@ -1404,6 +1445,7 @@ const CATALOG = [
   {
     "id": "muse-032",
     "title": "オトノケ",
+    "titleKo": "오토노케",
     "artist": "Creepy Nuts",
     "aliases": [
       "오토노케",
@@ -1435,8 +1477,10 @@ const CATALOG = [
   {
     "id": "muse-033",
     "title": "天体観測",
+    "titleKo": "천체 관측",
     "artist": "BUMP OF CHICKEN",
     "aliases": [
+      "천체 관측",
       "천체관측",
       "Tentai Kansoku"
     ],
@@ -1464,6 +1508,7 @@ const CATALOG = [
   {
     "id": "muse-034",
     "title": "ヴァンパイア",
+    "titleKo": "뱀파이어",
     "artist": "DECO*27",
     "aliases": [
       "뱀파이어",
@@ -1494,8 +1539,10 @@ const CATALOG = [
   {
     "id": "muse-035",
     "title": "ヒバナ",
+    "titleKo": "불꽃",
     "artist": "DECO*27",
     "aliases": [
+      "불꽃",
       "히바나",
       "Hibana",
       "데코니나"
@@ -1524,8 +1571,10 @@ const CATALOG = [
   {
     "id": "muse-036",
     "title": "ラビットホール",
+    "titleKo": "토끼굴",
     "artist": "DECO*27",
     "aliases": [
+      "토끼굴",
       "래빗 홀",
       "Rabbit Hole",
       "데코니나"
@@ -1554,8 +1603,10 @@ const CATALOG = [
   {
     "id": "muse-037",
     "title": "神っぽいな",
+    "titleKo": "신 같아",
     "artist": "ピノキオピー",
     "aliases": [
+      "신 같아",
       "신 같네",
       "Kamippoi na",
       "PinocchioP"
@@ -1584,8 +1635,10 @@ const CATALOG = [
   {
     "id": "muse-038",
     "title": "転生林檎",
+    "titleKo": "환생 사과",
     "artist": "ピノキオピー",
     "aliases": [
+      "환생 사과",
       "전생사과",
       "Tensei Ringo",
       "PinocchioP"
@@ -1614,8 +1667,10 @@ const CATALOG = [
   {
     "id": "muse-039",
     "title": "ローリンガール",
+    "titleKo": "구르는 소녀",
     "artist": "wowaka",
     "aliases": [
+      "구르는 소녀",
       "롤링걸",
       "Rolling Girl"
     ],
@@ -1643,8 +1698,10 @@ const CATALOG = [
   {
     "id": "muse-040",
     "title": "メルト",
+    "titleKo": "녹아내리다",
     "artist": "ryo (supercell)",
     "aliases": [
+      "녹아내리다",
       "멜트",
       "Melt"
     ],
@@ -1672,8 +1729,10 @@ const CATALOG = [
   {
     "id": "muse-041",
     "title": "アスノヨゾラ哨戒班",
+    "titleKo": "내일 밤하늘 초계반",
     "artist": "Orangestar",
     "aliases": [
+      "내일 밤하늘 초계반",
       "아스노요조라 초계반",
       "Asu no Yozora Shoukaihan"
     ],
@@ -1701,6 +1760,7 @@ const CATALOG = [
   {
     "id": "muse-042",
     "title": "KING",
+    "titleKo": null,
     "artist": "Kanaria",
     "aliases": [
       "킹",
@@ -1730,6 +1790,7 @@ const CATALOG = [
   {
     "id": "muse-043",
     "title": "カゲロウデイズ",
+    "titleKo": "아지랑이 데이즈",
     "artist": "じん",
     "aliases": [
       "아지랑이 데이즈",
@@ -1760,6 +1821,7 @@ const CATALOG = [
   {
     "id": "muse-044",
     "title": "MEGALOVANIA",
+    "titleKo": null,
     "artist": "Toby Fox",
     "aliases": [
       "메갈로바니아",
@@ -1791,6 +1853,7 @@ const CATALOG = [
   {
     "id": "muse-045",
     "title": "Hopes and Dreams",
+    "titleKo": null,
     "artist": "Toby Fox",
     "aliases": [
       "희망과 꿈",
@@ -1822,6 +1885,7 @@ const CATALOG = [
   {
     "id": "muse-046",
     "title": "Greenpath",
+    "titleKo": null,
     "artist": "Christopher Larkin",
     "aliases": [
       "그린패스",
@@ -1852,6 +1916,7 @@ const CATALOG = [
   {
     "id": "muse-047",
     "title": "Resurrections",
+    "titleKo": null,
     "artist": "Lena Raine",
     "aliases": [
       "셀레스트",
@@ -1881,6 +1946,7 @@ const CATALOG = [
   {
     "id": "muse-048",
     "title": "Rex Incognito",
+    "titleKo": null,
     "artist": "HOYO-MiX",
     "aliases": [
       "렉스 인코그니토",
@@ -1912,6 +1978,7 @@ const CATALOG = [
   {
     "id": "muse-049",
     "title": "U.N. Owen Was Her?",
+    "titleKo": null,
     "artist": "ZUN",
     "aliases": [
       "U.N. 오웬은 그녀인가",
@@ -1943,6 +2010,7 @@ const CATALOG = [
   {
     "id": "muse-050",
     "title": "Last Surprise",
+    "titleKo": null,
     "artist": "Shoji Meguro",
     "aliases": [
       "라스트 서프라이즈",
@@ -1974,6 +2042,7 @@ const CATALOG = [
   {
     "id": "muse-051",
     "title": "Unwelcome School",
+    "titleKo": null,
     "artist": "Mitsukiyo",
     "aliases": [
       "언웰컴 스쿨",
@@ -2005,6 +2074,7 @@ const CATALOG = [
   {
     "id": "muse-052",
     "title": "Weight of the World",
+    "titleKo": null,
     "artist": "Keiichi Okabe",
     "aliases": [
       "세계의 무게",
@@ -2066,6 +2136,7 @@ function history() {
   return [...session.seeds.map(songId=>({songId,kind:'seed'})),...session.probes,...session.feedback];
 }
 function esc(s='') { return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function displayTitle(song) { return song.titleKo ? `${song.title} (${song.titleKo})` : song.title; }
 function route() { const raw = location.hash.replace(/^#/, '').replace(/^\//,''); return ['select','probe','results'].includes(raw) ? raw : 'select'; }
 function navigate(next) { if(location.hash !== '#'+next) location.hash = '#'+next; render(); window.scrollTo({top:0,behavior:'instant'}); }
 function songById(id) { return CATALOG.find(s=>s.id===id); }
@@ -2092,7 +2163,7 @@ function tilesRender() {
   const selected=new Set(session.seeds);
   return `<div class="catalog-note"><span>${query?'검색 결과':'수록 곡'} <strong>${items.length}</strong>곡</span><span>곡명을 누르면 선택돼요</span></div>
   ${visible.length?`<div class="song-grid">${visible.map(song => `<button class="song-tile ${selected.has(song.id)?'selected':''}" type="button" data-action="toggle" data-id="${song.id}" aria-pressed="${selected.has(song.id)}">
-    ${art(song)}<span class="song-body"><span class="song-title" title="${esc(song.title)}">${esc(song.title)}</span><span class="song-artist">${esc(song.artist)}</span><span class="song-type">${esc(prettyDomain(song))}</span></span><span class="checkmark">✓</span>
+    ${art(song)}<span class="song-body"><span class="song-title" title="${esc(displayTitle(song))}">${esc(displayTitle(song))}</span><span class="song-artist">${esc(song.artist)}</span><span class="song-type">${esc(prettyDomain(song))}</span></span><span class="checkmark">✓</span>
   </button>`).join('')}</div>`:`<div class="empty-results">검색 결과가 없어요.<br>다른 표기나 아티스트명으로 찾아보세요.</div>`}
   ${items.length>pageLimit?`<div style="text-align:center;margin-top:20px"><button class="secondary-btn" type="button" data-action="more">더 보기 <span style="color:var(--muted)">${items.length-pageLimit}곡 남음</span></button></div>`:''}`;
 }
@@ -2101,7 +2172,7 @@ function selectionDetail() {
   return `<div class="side-top"><h3>내가 고른 노래</h3><span class="side-count">${n} / 10</span></div>
     <div class="meter"><div class="meter-fill" style="width:${Math.min(n/5*100,100)}%"></div></div>
     <p class="small-muted">${n<5?`최소 5곡이 필요해요. <strong>${5-n}곡</strong> 더 골라주세요.`:'준비됐어요. 최대 10곡까지 고를 수 있어요.'}</p>
-    <div class="selected-list">${n?session.seeds.map((id,i)=>{const s=songById(id);return `<div class="selected-item"><span class="selected-num">${String(i+1).padStart(2,'0')}</span><span class="selected-name" title="${esc(s.title)}">${esc(s.title)}</span><button class="remove-btn" type="button" data-action="toggle" data-id="${id}" aria-label="${esc(s.title)} 선택 해제">×</button></div>`;}).join(''):`<div class="empty-selection">고른 노래가 여기에 표시돼요.</div>`}</div>
+    <div class="selected-list">${n?session.seeds.map((id,i)=>{const s=songById(id);return `<div class="selected-item"><span class="selected-num">${String(i+1).padStart(2,'0')}</span><span class="selected-name" title="${esc(displayTitle(s))}">${esc(displayTitle(s))}</span><button class="remove-btn" type="button" data-action="toggle" data-id="${id}" aria-label="${esc(displayTitle(s))} 선택 해제">×</button></div>`;}).join(''):`<div class="empty-selection">고른 노래가 여기에 표시돼요.</div>`}</div>
     <button class="primary-btn full" data-action="start" type="button" ${n<5?'disabled':''}>다음: 취향 테스트 <span aria-hidden="true">→</span></button>
     <p class="rule-note">로그인 없이 진행할 수 있어요. 선택 내역은 이 브라우저에만 저장됩니다.</p>`;
 }
@@ -2127,7 +2198,7 @@ function renderProbe() {
     <div class="progress-head"><span>취향 테스트</span><strong>${String(n+1).padStart(2,'0')} / 10</strong></div>
     <div class="progress-track"><div style="width:${n/10*100}%"></div></div>
     <article class="probe-card"><div class="track-number">TRACK ${String(n+1).padStart(2,'0')}</div>${art(probe)}
-      <div class="probe-title">${esc(probe.title)}</div><div class="probe-artist">${esc(probe.artist)}</div><span class="pill-label">${esc(prettyDomain(probe))}</span>
+      <div class="probe-title">${esc(displayTitle(probe))}</div><div class="probe-artist">${esc(probe.artist)}</div><span class="pill-label">${esc(prettyDomain(probe))}</span>
       <a class="listen-link" href="${listenUrl(probe)}" target="_blank" rel="noopener noreferrer">유튜브에서 이 곡 듣기 ↗</a>
     </article>
     <div class="quiz-question">이 곡은 얼마나 마음에 드나요?</div>
@@ -2150,9 +2221,9 @@ function tasteHtml(profile) {
 function recommendationCard(rec,index) {
  const s=rec.song;
  return `<article class="rec-card"><span class="rec-rank">${String(index+1).padStart(2,'0')}</span>${art(s)}
- <div class="rec-info"><div class="rec-song" title="${esc(s.title)}">${esc(s.title)}</div><div class="rec-artist">${esc(s.artist)} · ${esc(prettyDomain(s))}</div><div class="rec-reason">${esc(rec.reasons.join(' · '))}</div></div>
+ <div class="rec-info"><div class="rec-song" title="${esc(displayTitle(s))}">${esc(displayTitle(s))}</div><div class="rec-artist">${esc(s.artist)} · ${esc(prettyDomain(s))}</div><div class="rec-reason">${esc(rec.reasons.join(' · '))}</div></div>
  <div class="rec-actions"><span class="score-badge" title="적중 확률이 아닌 상대적 추천 점수">지수 ${Math.round(rec.score.score*100)}</span>
- <a class="action-btn listen-action" href="${listenUrl(s)}" target="_blank" rel="noopener noreferrer" aria-label="${esc(s.title)} 유튜브에서 검색">듣기 ↗</a>
+ <a class="action-btn listen-action" href="${listenUrl(s)}" target="_blank" rel="noopener noreferrer" aria-label="${esc(displayTitle(s))} 유튜브에서 검색">듣기 ↗</a>
  <button class="action-btn" data-action="rate-result" data-id="${s.id}" data-kind="love" type="button" title="추천에 반영하기">♥ 좋아요</button>
  <button class="action-btn" data-action="rate-result" data-id="${s.id}" data-kind="dislike" type="button" title="추천에 반영하기">× 별로</button></div>
  </article>`;

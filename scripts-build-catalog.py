@@ -21,8 +21,8 @@ TAGS={'bright-rock':['guitar','upbeat','band'],'dark-rock':['guitar','intense','
 ARTIST_ALIASES={'YOASOBI':['요아소비'],'Ado':['아도'],'Eve':['이브'],'Vaundy':['바운디'],'Aimer':['에메'],'LiSA':['리사'],'King Gnu':['킹누'],'Creepy Nuts':['크리피 너츠'],'DECO*27':['데코니나'],'Toby Fox':['토비 폭스'],'HOYO-MiX':['호요믹스'],'Mitsukiyo':['미츠키요'],'Kanaria':['카나리아']}
 data=[]
 for i,line in enumerate((root/'catalog-source.tsv').read_text(encoding='utf-8').splitlines(),1):
-    title,artist,domains,genre,preset,vocal,aliases=line.split('|')
-    data.append({'id':f'muse-{i:03d}','title':title,'artist':artist,'aliases':aliases.split(';')+ARTIST_ALIASES.get(artist,[]),'domains':domains.split(','),'genres':[genre],'tags':TAGS[preset], 'features':dict(zip(KEYS,PRESETS[preset])),'vocal':vocal})
+    title,artist,domains,genre,preset,vocal,aliases,ko_title=line.split('|')
+    data.append({'id':f'muse-{i:03d}','title':title,'titleKo':ko_title or None,'artist':artist,'aliases':list(dict.fromkeys(([ko_title] if ko_title else [])+aliases.split(';')+ARTIST_ALIASES.get(artist,[]))),'domains':domains.split(','),'genres':[genre],'tags':TAGS[preset], 'features':dict(zip(KEYS,PRESETS[preset])),'vocal':vocal})
 assert len(data)==52,len(data)
 (root/'catalog-data.json').write_text(json.dumps(data,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
 (root/'catalog.js').write_text('export const CATALOG = '+json.dumps(data,ensure_ascii=False,indent=2)+';\n',encoding='utf-8')

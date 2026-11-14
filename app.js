@@ -30,6 +30,7 @@ function history() {
   return [...session.seeds.map(songId=>({songId,kind:'seed'})),...session.probes,...session.feedback];
 }
 function esc(s='') { return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function displayTitle(song) { return song.titleKo ? `${song.title} (${song.titleKo})` : song.title; }
 function route() { const raw = location.hash.replace(/^#/, '').replace(/^\//,''); return ['select','probe','results'].includes(raw) ? raw : 'select'; }
 function navigate(next) { if(location.hash !== '#'+next) location.hash = '#'+next; render(); window.scrollTo({top:0,behavior:'instant'}); }
 function songById(id) { return CATALOG.find(s=>s.id===id); }
@@ -56,7 +57,7 @@ function tilesRender() {
   const selected=new Set(session.seeds);
   return `<div class="catalog-note"><span>${query?'검색 결과':'수록 곡'} <strong>${items.length}</strong>곡</span><span>곡명을 누르면 선택돼요</span></div>
   ${visible.length?`<div class="song-grid">${visible.map(song => `<button class="song-tile ${selected.has(song.id)?'selected':''}" type="button" data-action="toggle" data-id="${song.id}" aria-pressed="${selected.has(song.id)}">
-    ${art(song)}<span class="song-body"><span class="song-title" title="${esc(song.title)}">${esc(song.title)}</span><span class="song-artist">${esc(song.artist)}</span><span class="song-type">${esc(prettyDomain(song))}</span></span><span class="checkmark">✓</span>
+    ${art(song)}<span class="song-body"><span class="song-title" title="${esc(displayTitle(song))}">${esc(displayTitle(song))}</span><span class="song-artist">${esc(song.artist)}</span><span class="song-type">${esc(prettyDomain(song))}</span></span><span class="checkmark">✓</span>
   </button>`).join('')}</div>`:`<div class="empty-results">검색 결과가 없어요.<br>다른 표기나 아티스트명으로 찾아보세요.</div>`}
   ${items.length>pageLimit?`<div style="text-align:center;margin-top:20px"><button class="secondary-btn" type="button" data-action="more">더 보기 <span style="color:var(--muted)">${items.length-pageLimit}곡 남음</span></button></div>`:''}`;
 }
@@ -65,7 +66,7 @@ function selectionDetail() {
   return `<div class="side-top"><h3>내가 고른 노래</h3><span class="side-count">${n} / 10</span></div>
     <div class="meter"><div class="meter-fill" style="width:${Math.min(n/5*100,100)}%"></div></div>
     <p class="small-muted">${n<5?`최소 5곡이 필요해요. <strong>${5-n}곡</strong> 더 골라주세요.`:'준비됐어요. 최대 10곡까지 고를 수 있어요.'}</p>
-    <div class="selected-list">${n?session.seeds.map((id,i)=>{const s=songById(id);return `<div class="selected-item"><span class="selected-num">${String(i+1).padStart(2,'0')}</span><span class="selected-name" title="${esc(s.title)}">${esc(s.title)}</span><button class="remove-btn" type="button" data-action="toggle" data-id="${id}" aria-label="${esc(s.title)} 선택 해제">×</button></div>`;}).join(''):`<div class="empty-selection">고른 노래가 여기에 표시돼요.</div>`}</div>
+    <div class="selected-list">${n?session.seeds.map((id,i)=>{const s=songById(id);return `<div class="selected-item"><span class="selected-num">${String(i+1).padStart(2,'0')}</span><span class="selected-name" title="${esc(displayTitle(s))}">${esc(displayTitle(s))}</span><button class="remove-btn" type="button" data-action="toggle" data-id="${id}" aria-label="${esc(displayTitle(s))} 선택 해제">×</button></div>`;}).join(''):`<div class="empty-selection">고른 노래가 여기에 표시돼요.</div>`}</div>
     <button class="primary-btn full" data-action="start" type="button" ${n<5?'disabled':''}>다음: 취향 테스트 <span aria-hidden="true">→</span></button>
     <p class="rule-note">로그인 없이 진행할 수 있어요. 선택 내역은 이 브라우저에만 저장됩니다.</p>`;
 }
@@ -91,7 +92,7 @@ function renderProbe() {
     <div class="progress-head"><span>취향 테스트</span><strong>${String(n+1).padStart(2,'0')} / 10</strong></div>
     <div class="progress-track"><div style="width:${n/10*100}%"></div></div>
     <article class="probe-card"><div class="track-number">TRACK ${String(n+1).padStart(2,'0')}</div>${art(probe)}
-      <div class="probe-title">${esc(probe.title)}</div><div class="probe-artist">${esc(probe.artist)}</div><span class="pill-label">${esc(prettyDomain(probe))}</span>
+      <div class="probe-title">${esc(displayTitle(probe))}</div><div class="probe-artist">${esc(probe.artist)}</div><span class="pill-label">${esc(prettyDomain(probe))}</span>
       <a class="listen-link" href="${listenUrl(probe)}" target="_blank" rel="noopener noreferrer">유튜브에서 이 곡 듣기 ↗</a>
     </article>
     <div class="quiz-question">이 곡은 얼마나 마음에 드나요?</div>
@@ -114,9 +115,9 @@ function tasteHtml(profile) {
 function recommendationCard(rec,index) {
  const s=rec.song;
  return `<article class="rec-card"><span class="rec-rank">${String(index+1).padStart(2,'0')}</span>${art(s)}
- <div class="rec-info"><div class="rec-song" title="${esc(s.title)}">${esc(s.title)}</div><div class="rec-artist">${esc(s.artist)} · ${esc(prettyDomain(s))}</div><div class="rec-reason">${esc(rec.reasons.join(' · '))}</div></div>
+ <div class="rec-info"><div class="rec-song" title="${esc(displayTitle(s))}">${esc(displayTitle(s))}</div><div class="rec-artist">${esc(s.artist)} · ${esc(prettyDomain(s))}</div><div class="rec-reason">${esc(rec.reasons.join(' · '))}</div></div>
  <div class="rec-actions"><span class="score-badge" title="적중 확률이 아닌 상대적 추천 점수">지수 ${Math.round(rec.score.score*100)}</span>
- <a class="action-btn listen-action" href="${listenUrl(s)}" target="_blank" rel="noopener noreferrer" aria-label="${esc(s.title)} 유튜브에서 검색">듣기 ↗</a>
+ <a class="action-btn listen-action" href="${listenUrl(s)}" target="_blank" rel="noopener noreferrer" aria-label="${esc(displayTitle(s))} 유튜브에서 검색">듣기 ↗</a>
  <button class="action-btn" data-action="rate-result" data-id="${s.id}" data-kind="love" type="button" title="추천에 반영하기">♥ 좋아요</button>
  <button class="action-btn" data-action="rate-result" data-id="${s.id}" data-kind="dislike" type="button" title="추천에 반영하기">× 별로</button></div>
  </article>`;

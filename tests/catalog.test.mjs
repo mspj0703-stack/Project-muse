@@ -35,3 +35,17 @@ test('end-to-end engine journey: choose 5, probe 10, recommend up to 10',()=>{
  assert.ok(recs.every(r=>!ratings.some(x=>x.songId===r.song.id)));
  assert.ok(recs.every(r=>r.score.score>=0 && r.score.score<=1));
 });
+
+test('every Japanese-script song has a Korean parenthesized display title',()=>{
+  const ja = CATALOG.filter(song => /[\u3040-\u30ff\u3400-\u9fff]/u.test(song.title));
+  assert.equal(ja.length,36);
+  for (const song of ja) {
+    assert.ok(song.titleKo && /[가-힣]/u.test(song.titleKo), `Missing Korean title: ${song.title}`);
+    assert.ok(song.titleKo !== song.title, 'Korean name should differ from source title');
+    assert.ok(searchCatalog(CATALOG,song.titleKo,100).some(s=>s.id===song.id), `Korean search failed: ${song.titleKo}`);
+  }
+});
+test('common Korean song title searches use translation (not only pronunciation)',()=>{
+  const cases=[['밤을 달리다','夜に駆ける'],['새로운 시대','新時代'],['춤','踊'],['불꽃','炎'],['녹아내리다','メルト']];
+  for (const [korean,japanese] of cases) assert.ok(searchCatalog(CATALOG,korean,100).some(s=>s.title===japanese));
+});

@@ -65,7 +65,7 @@ h3{letter-spacing:-.025em}
 .art-vocaloid{background:linear-gradient(135deg,#8fd6cd,#3a8d9f)}
 .art-game_ost{background:linear-gradient(135deg,#788fca,#4f567c)}
 .song-body{min-width:0;flex:1;display:flex;flex-direction:column;align-items:flex-start}
-.song-title{font-size:13px;font-weight:750;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-bottom:5px}
+.song-title{font-size:13px;font-weight:750;overflow-wrap:anywhere;line-height:1.5;margin-bottom:5px;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
 .song-artist{font-size:11px;color:#acb5bc;white-space:nowrap;text-overflow:ellipsis;overflow:hidden}
 .song-type{font-size:10px;color:#89959e;text-transform:uppercase;letter-spacing:.045em;margin-top:6px}
 .checkmark{width:25px;height:25px;flex:0 0 auto;border:1px solid #66727a;border-radius:50%;display:grid;place-items:center;color:transparent;font-size:14px}
@@ -132,7 +132,7 @@ h3{letter-spacing:-.025em}
 .rec-rank{font:800 12px ui-monospace,monospace;color:#a9b1b9;text-align:center}
 .rec-card .artwork{width:64px;height:64px}
 .rec-info{min-width:0}
-.rec-song{font-size:14px;font-weight:770;margin:0 0 5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.rec-song{font-size:14px;font-weight:770;margin:0 0 5px;overflow-wrap:anywhere;line-height:1.5}
 .rec-artist{color:#acb6bc;font-size:11px;margin:0 0 8px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .rec-reason{font-size:11px;color:#aabaaf;line-height:1.5}
 .rec-actions{display:flex;align-items:center;gap:6px;flex-wrap:wrap;justify-content:flex-end;max-width:215px}
