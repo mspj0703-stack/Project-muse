@@ -1,0 +1,2242 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#11151a">
+  <meta name="description" content="J-POP, 애니송, 보컬로이드, 게임 OST를 위한 음악 취향 탐색 프로토타입.">
+  <title>MUSE — 내 취향을 닮은 다음 곡</title>
+<style>
+:root{
+  color-scheme:dark;
+  --bg:#11151a; --panel:#191f26; --panel-soft:#1f2730; --line:#343c45;
+  --text:#f1f2ef; --muted:#9faab3; --accent:#dfef9e; --accent-dark:#17220b;
+  --peach:#efaf9d; --aqua:#9fd8d7; --purple:#c9b5e6;
+  font-family: "Pretendard Variable", Pretendard, "Apple SD Gothic Neo", "Noto Sans KR", "Yu Gothic", system-ui, sans-serif;
+  font-synthesis:none;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--text);min-width:300px}
+button,input,a{font:inherit} button{cursor:pointer} a{color:inherit;text-decoration:none}
+button:focus-visible,input:focus-visible,a:focus-visible{outline:3px solid #dfef9e;outline-offset:3px}
+button:disabled{cursor:not-allowed;opacity:.5}
+.site-shell{min-height:100vh;display:flex;flex-direction:column;overflow:hidden}
+.header{height:84px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;padding:0 clamp(20px,5vw,76px)}
+.brand{font-family:Georgia,serif;font-size:30px;font-weight:800;letter-spacing:-1.8px;display:inline-flex;align-items:center;gap:13px}
+.brand-icon{display:grid;place-items:center;width:39px;height:39px;background:var(--accent);border-radius:50%;color:#161d15;font:normal 26px system-ui;line-height:1}
+.brand-dot{color:var(--accent)}
+.header-right{display:flex;align-items:center;gap:22px}
+.header-note{font-size:10px;font-weight:700;letter-spacing:2.2px;color:var(--muted)}
+.alpha-chip{border:1px solid #52604a;border-radius:100px;padding:7px 11px;color:var(--accent);font-size:10px;letter-spacing:1.2px;font-weight:750}
+.steps{display:flex;align-items:center;gap:9px;max-width:1150px;width:calc(100% - 44px);margin:30px auto 0;padding:0 1px}
+.step-link{display:flex;align-items:center;gap:10px;color:#8b959e;font-size:12px;letter-spacing:.06em;font-weight:700;padding:10px 12px;border-radius:8px;border:1px solid transparent}
+.step-link.active{color:var(--text);border-color:var(--line);background:#1d242b}
+.step-link.done{color:var(--accent)}
+.step-number{font:600 11px ui-monospace,monospace;letter-spacing:0;color:inherit}
+.step-line{width:34px;height:1px;background:var(--line)}
+#app{width:100%;max-width:1150px;margin:0 auto;padding:29px 22px 96px;flex:1}
+.eyebrow{display:flex;align-items:center;gap:11px;color:var(--accent);font-size:12px;font-weight:750;letter-spacing:2px;margin-bottom:14px}
+.eyebrow:before{content:"";width:26px;height:1px;background:var(--accent)}
+h1,h2,h3,p{margin-top:0}
+h1{font-size:clamp(35px,5.1vw,66px);line-height:1.18;letter-spacing:-.055em;font-weight:780;margin-bottom:18px;word-break:keep-all}
+h1 em{font-style:normal;color:var(--accent)}
+h2{letter-spacing:-.035em;font-size:24px;margin-bottom:6px}
+h3{letter-spacing:-.025em}
+.lead{color:var(--muted);font-size:15px;line-height:1.8;max-width:580px;word-break:keep-all}
+.hero{padding:23px 0 32px;position:relative}
+.hero:after{content:"MUSE";position:absolute;right:0;top:0;font:900 clamp(90px,15vw,174px) Georgia,serif;color:#1b2228;letter-spacing:-.09em;z-index:-1;pointer-events:none}
+.info-line{display:flex;gap:15px;flex-wrap:wrap;margin-top:25px}
+.info-line span{color:var(--muted);font-size:12px;display:inline-flex;gap:8px;align-items:center}
+.info-line strong{color:var(--text);font-weight:700}
+.info-line span:not(:first-child):before{content:"/";color:#66717c;margin-right:5px}
+.main-grid{display:grid;grid-template-columns:minmax(0,1fr) 302px;gap:25px;align-items:start;margin-top:15px}
+.section-label{display:flex;justify-content:space-between;align-items:end;gap:10px;margin:0 0 18px}
+.section-label p{font-size:12px;color:var(--muted);margin:0}
+.search-field{display:flex;align-items:center;gap:10px;background:#222a33;border:1px solid #47505b;border-radius:13px;padding:0 18px;height:57px;margin:0 0 15px}
+.search-field:focus-within{border-color:var(--accent)}
+.search-icon{font-size:19px;color:#bec8c9}
+.search-field input{width:100%;height:100%;border:0;background:transparent;outline:none;color:white;font-size:15px;min-width:0}
+.search-field input::placeholder{color:#84909a}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:15px 0 18px}
+.chip{background:transparent;border:1px solid #3e4852;color:#bac2c9;border-radius:100px;padding:9px 15px;font-size:12px;transition:.12s}
+.chip.active{color:#151b13;background:var(--accent);border-color:var(--accent);font-weight:750}
+.catalog-note{display:flex;align-items:center;justify-content:space-between;font-size:12px;color:var(--muted);margin:0 0 13px}
+.song-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.song-tile{min-width:0;display:flex;text-align:left;gap:13px;align-items:center;border:1px solid #303943;background:#1b222a;padding:11px;border-radius:14px;color:var(--text);transition:background .15s,border-color .15s}
+.song-tile:hover{border-color:#727d79;background:#242d35}
+.song-tile.selected{border-color:var(--accent);background:#232e24}
+.artwork{flex:0 0 auto;display:grid;place-items:center;position:relative;overflow:hidden;isolation:isolate;width:58px;height:58px;border-radius:9px;background:#4b5865;color:#f5f6f1}
+.artwork:before{content:"";position:absolute;inset:-18%;border-radius:50%;border:10px solid #ffffff2c;transform:translate(22%,12%);z-index:-1}
+.artwork .art-symbol{font-size:30px;font-family:Georgia,serif;line-height:1;transform:rotate(-17deg)}
+.art-jpop{background:linear-gradient(130deg,#ed9b91,#815b90)}
+.art-anime{background:linear-gradient(130deg,#d6bd85,#ab658c)}
+.art-vocaloid{background:linear-gradient(135deg,#8fd6cd,#3a8d9f)}
+.art-game_ost{background:linear-gradient(135deg,#788fca,#4f567c)}
+.song-body{min-width:0;flex:1;display:flex;flex-direction:column;align-items:flex-start}
+.song-title{font-size:13px;font-weight:750;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-bottom:5px}
+.song-artist{font-size:11px;color:#acb5bc;white-space:nowrap;text-overflow:ellipsis;overflow:hidden}
+.song-type{font-size:10px;color:#89959e;text-transform:uppercase;letter-spacing:.045em;margin-top:6px}
+.checkmark{width:25px;height:25px;flex:0 0 auto;border:1px solid #66727a;border-radius:50%;display:grid;place-items:center;color:transparent;font-size:14px}
+.song-tile.selected .checkmark{background:var(--accent);color:var(--accent-dark);border-color:var(--accent)}
+.side-panel{position:sticky;top:20px;border:1px solid #3c464f;background:#1c232b;border-radius:17px;padding:22px}
+.side-top{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.side-top h3{font-size:17px;margin:0}
+.side-count{border:1px solid #5f7552;border-radius:100px;color:var(--accent);padding:5px 9px;font:700 11px ui-monospace,monospace}
+.meter{height:5px;background:#354139;border-radius:4px;overflow:hidden;margin:19px 0 12px}
+.meter-fill{height:100%;background:var(--accent);transition:width .2s}
+.small-muted{color:var(--muted);font-size:12px;line-height:1.7}
+.selected-list{display:flex;flex-direction:column;gap:7px;margin:19px 0 22px;min-height:100px}
+.selected-item{border-bottom:1px solid #313b44;display:flex;align-items:center;gap:8px;padding:6px 0 10px}
+.selected-num{font:700 10px ui-monospace,monospace;color:var(--accent)}
+.selected-name{font-size:12px;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.remove-btn{background:none;border:0;color:#a0abb2;font-size:20px;line-height:1;padding:2px 6px}
+.empty-selection{display:flex;align-items:center;justify-content:center;text-align:center;color:#7e8a95;font-size:12px;line-height:1.7;height:90px;border:1px dashed #48525d;border-radius:9px}
+.primary-btn{display:inline-flex;justify-content:center;align-items:center;gap:10px;border:0;border-radius:10px;padding:16px 20px;font-size:14px;font-weight:800;color:#1b2412;background:var(--accent);transition:filter .15s,transform .15s}
+.primary-btn:hover:not(:disabled){filter:brightness(1.05);transform:translateY(-1px)}
+.secondary-btn{display:inline-flex;align-items:center;justify-content:center;gap:9px;border:1px solid #58636a;color:#e2e6e5;background:transparent;border-radius:10px;padding:13px 15px;font-weight:650;font-size:13px}
+.secondary-btn:hover{background:#273039}
+.full{width:100%}
+.rule-note{font-size:11px;color:#8f9da6;line-height:1.6;margin:13px 0 0}
+.mobile-cta{display:none}
+.center-stage{max-width:710px;margin:0 auto;padding-top:28px}
+.stage-head{text-align:center;margin-bottom:35px}
+.stage-head .eyebrow{justify-content:center}
+.stage-head h1{font-size:clamp(32px,5.2vw,53px)}
+.progress-head{display:flex;justify-content:space-between;align-items:center;font-size:12px;letter-spacing:.1em;margin:0 0 9px;color:var(--muted)}
+.progress-head strong{color:var(--accent);font:800 14px ui-monospace,monospace}
+.progress-track{height:5px;border-radius:10px;background:#303942;overflow:hidden;margin:0 0 25px}
+.progress-track>div{height:100%;background:var(--accent);transition:width .2s}
+.probe-card{border:1px solid #3b4650;background:#1b222a;padding:35px;border-radius:21px;text-align:center;position:relative;overflow:hidden}
+.probe-card .artwork{margin:0 auto 18px;width:155px;height:155px;border-radius:17px}
+.probe-card .art-symbol{font-size:78px}
+.probe-card .track-number{font-size:11px;color:var(--muted);font-weight:750;letter-spacing:.15em;margin-bottom:22px}
+.probe-title{font-size:clamp(22px,3vw,30px);font-weight:800;letter-spacing:-.045em;margin-bottom:7px;overflow-wrap:anywhere}
+.probe-artist{color:#b7c1c6;margin-bottom:17px;font-size:14px}
+.pill-label{display:inline-flex;background:#303b45;border:1px solid #475761;color:#cfd7d5;padding:7px 13px;border-radius:30px;font-size:11px}
+.listen-link{display:flex;width:max-content;margin:23px auto 0;align-items:center;gap:9px;color:var(--accent);font-weight:750;font-size:13px;border-bottom:1px solid #617657;padding-bottom:5px}
+.quiz-question{font-size:17px;font-weight:750;margin:28px 0 16px;text-align:center}
+.rating-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px}
+.rating-btn{background:#252e37;border:1px solid #43505b;border-radius:12px;color:#f1f1ee;padding:16px 7px;display:flex;flex-direction:column;gap:8px;align-items:center;font-size:12px;font-weight:700}
+.rating-btn:hover{background:#303e46;border-color:var(--accent)}
+.rating-icon{font-size:24px;line-height:1}
+.skip-wrap{text-align:center;margin-top:17px}
+.skip-btn{background:transparent;border:0;color:#aab4bb;padding:10px;font-size:12px;text-decoration:underline;text-underline-offset:4px}
+.back-btn{margin-top:25px}
+.results-intro{padding:15px 0 35px}
+.results-layout{display:grid;grid-template-columns:300px minmax(0,1fr);gap:26px;align-items:start}
+.profile-panel{border:1px solid #3f4b52;background:#1c232b;padding:22px;border-radius:17px;position:sticky;top:20px}
+.profile-title{font-size:16px;font-weight:800;margin-bottom:4px}
+.profile-rows{display:flex;flex-direction:column;gap:15px;margin:25px 0}
+.profile-line{display:flex;justify-content:space-between;gap:12px;font-size:12px;color:#b9c5c6;margin-bottom:7px}
+.profile-line strong{color:#dfe5e0;font:700 11px ui-monospace,monospace}
+.profile-bar{height:5px;border-radius:4px;background:#35404a;overflow:hidden}
+.profile-bar>div{height:100%;background:var(--aqua);border-radius:4px}
+.genre-tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:13px}
+.genre-tag{padding:7px 10px;background:#2b3640;border-radius:5px;color:#c2cbd0;font-size:10px}
+.rec-section-head{display:flex;align-items:end;justify-content:space-between;gap:12px;margin:0 0 16px}
+.rec-section-head p{color:var(--muted);font-size:12px;margin:0}
+.rec-list{display:flex;flex-direction:column;gap:10px}
+.rec-card{display:grid;grid-template-columns:28px 64px minmax(0,1fr) auto;align-items:center;gap:13px;background:#1b222a;border:1px solid #34404a;border-radius:14px;padding:13px}
+.rec-rank{font:800 12px ui-monospace,monospace;color:#a9b1b9;text-align:center}
+.rec-card .artwork{width:64px;height:64px}
+.rec-info{min-width:0}
+.rec-song{font-size:14px;font-weight:770;margin:0 0 5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.rec-artist{color:#acb6bc;font-size:11px;margin:0 0 8px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.rec-reason{font-size:11px;color:#aabaaf;line-height:1.5}
+.rec-actions{display:flex;align-items:center;gap:6px;flex-wrap:wrap;justify-content:flex-end;max-width:215px}
+.score-badge{font:750 11px ui-monospace,monospace;color:var(--accent);border:1px solid #50624b;padding:5px 8px;border-radius:100px;white-space:nowrap}
+.action-btn{border:1px solid #495661;background:#27323a;color:#d5dfdd;border-radius:7px;padding:7px 9px;font-size:11px;font-weight:700}
+.action-btn:hover{border-color:var(--accent);color:var(--accent)}
+.listen-action{color:#9ed8d4}
+.results-bottom{margin-top:26px;display:flex;gap:10px;flex-wrap:wrap}
+.callout{border:1px dashed #5a674f;padding:14px 16px;color:#b6c6ae;font-size:12px;line-height:1.65;border-radius:11px;margin-top:22px}
+.empty-results{border:1px dashed var(--line);padding:45px 23px;text-align:center;border-radius:12px;color:#b1bdc4;line-height:1.8}
+.footer{border-top:1px solid var(--line);display:flex;justify-content:space-between;gap:18px;align-items:center;font-size:10px;letter-spacing:.07em;color:#88949d;padding:21px clamp(20px,5vw,76px)}
+.boot{text-align:center;color:var(--muted);padding:100px 0}
+@media(max-width:950px){.main-grid{grid-template-columns:minmax(0,1fr) 260px;gap:15px}.side-panel{padding:17px}.results-layout{grid-template-columns:260px minmax(0,1fr)}.rec-card{grid-template-columns:18px 53px minmax(0,1fr)}.rec-card .artwork{width:53px;height:53px}.rec-actions{grid-column:3;justify-content:flex-start;max-width:none}}
+@media(max-width:710px){.header{height:70px;padding:0 20px}.brand{font-size:26px}.brand-icon{height:32px;width:32px;font-size:22px}.header-note{display:none}.steps{margin:15px auto 0;width:calc(100% - 24px);justify-content:center;gap:1px}.step-link{padding:8px 9px;font-size:10px;gap:5px}.step-line{width:14px}#app{padding:22px 17px 96px}.hero{padding-top:9px}.hero:after{font-size:120px;top:48px}.hero h1{font-size:clamp(34px,8.5vw,50px)}.hero .lead{font-size:13px;line-height:1.7}.info-line{gap:7px 15px;margin-top:18px}.main-grid{display:block}.song-grid{grid-template-columns:1fr}.song-tile{padding:9px}.side-panel{display:none}.mobile-cta{display:flex;position:fixed;left:12px;right:12px;bottom:12px;z-index:10;border:1px solid #5b6a53;background:#202a24;border-radius:13px;padding:10px 11px;align-items:center;gap:13px;box-shadow:0 8px 35px #000a}.mobile-cta .primary-btn{width:auto;min-width:140px;padding:13px 17px;font-size:12px;margin-left:auto}.mobile-cta .mobile-meta{font-size:11px;color:#bdcbbc;line-height:1.6}.mobile-cta .mobile-meta strong{font:700 18px ui-monospace,monospace;color:var(--accent)}.center-stage{padding-top:15px}.stage-head{margin-bottom:25px}.stage-head h1{font-size:33px}.probe-card{padding:23px 16px}.probe-card .artwork{width:134px;height:134px}.rating-grid{gap:6px}.rating-btn{padding:14px 5px;font-size:11px}.results-layout{display:flex;flex-direction:column}.profile-panel{width:100%;position:static}.rec-section{width:100%}.rec-card{gap:9px;padding:11px}.rec-reason{font-size:10px}.rec-section-head h2{font-size:22px}.results-intro{padding:10px 0 22px}.footer{flex-direction:column;align-items:flex-start;padding:19px 20px;line-height:1.6}}
+@media(max-width:360px){.rating-grid{grid-template-columns:repeat(2,1fr)}.song-artist{max-width:160px}.step-link{font-size:9px}.rec-card{grid-template-columns:17px 46px minmax(0,1fr)}.rec-card .artwork{height:46px;width:46px}}
+@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
+
+</style>
+</head>
+<body>
+  <div class="site-shell">
+    <header class="header">
+      <a href="#select" class="brand" aria-label="MUSE 시작 화면">
+        <span class="brand-icon" aria-hidden="true">✳</span><span>MUSE<span class="brand-dot">.</span></span>
+      </a>
+      <div class="header-right"><span class="header-note">YOUR NEXT FAVORITE SONG</span><span class="alpha-chip">ALPHA / 0.2</span></div>
+    </header>
+    <nav id="steps" class="steps" aria-label="진행 단계"></nav>
+    <main id="app" tabindex="-1"><div class="boot">음악 카탈로그를 불러오는 중…</div></main>
+    <footer class="footer"><span>MUSE · MUSIC DISCOVERY LAB</span><span>파일럿 곡 특징은 수동 임시 분류 · 실제 음원 분석이 아닙니다.</span></footer>
+  </div>
+  <noscript><p style="padding:24px;font-family:sans-serif">이 사이트는 JavaScript가 필요합니다. 브라우저에서 JavaScript를 켜 주세요.</p></noscript>
+  <script>
+    // 로딩 실패 안내: 앱이 6초 안에 화면을 그리지 못하면 멈춘 채로 두지 않고 원인을 표시합니다.
+    setTimeout(function () {
+      var boot = document.querySelector('.boot');
+      if (!boot) return;
+      var what = window.__museLoadFailed ? ' (' + window.__museLoadFailed + ' 파일을 불러오지 못했어요)' : '';
+      boot.innerHTML = '앗, 화면을 불러오지 못했어요' + what + '.<br>잠시 후 새로고침해 주세요. 계속되면 배포 파일(app.js, styles.css, catalog.js, engine/dist)이 모두 올라갔는지 확인해 주세요.';
+    }, 6000);
+  </script>
+<script>
+(function(){
+"use strict";
+// FILE: engine/dist/types.js
+const FEATURE_KEYS = ["energy", "brightness", "melancholy", "complexity", "acoustic", "electronic"];
+
+// FILE: engine/dist/utils.js
+
+const clamp = (n, low = 0, high = 1) => Math.max(low, Math.min(high, n));
+const isUnit = (n) => n !== undefined && Number.isFinite(n) && n >= 0 && n <= 1;
+function normalizedTerms(value) {
+    return new Set(value.map(v => v.normalize("NFKC").trim().toLocaleLowerCase()).filter(Boolean));
+}
+function jaccard(a, b) {
+    const x = normalizedTerms(a), y = normalizedTerms(b);
+    if (!x.size || !y.size)
+        return null;
+    let matched = 0;
+    for (const t of x)
+        if (y.has(t))
+            matched++;
+    return matched / (x.size + y.size - matched);
+}
+function latestRatings(ratings) {
+    const latest = new Map();
+    for (const rating of ratings)
+        latest.set(rating.songId, rating);
+    return [...latest.values()];
+}
+const signedWeight = {
+    seed: 3, love: 3, like: 1.5, neutral: 0, dislike: -2, skip: 0
+};
+function audioSimilarity(a, b) {
+    const diffs = [];
+    for (const key of FEATURE_KEYS) {
+        const x = a.features[key], y = b.features[key];
+        if (isUnit(x) && isUnit(y))
+            diffs.push(Math.abs(x - y));
+    }
+    const values = [];
+    if (diffs.length >= 2)
+        values.push({ value: 1 - diffs.reduce((x, y) => x + y, 0) / diffs.length, weight: 0.7 });
+    const tags = jaccard(a.tags, b.tags);
+    if (tags !== null)
+        values.push({ value: tags, weight: 0.2 });
+    if (a.vocal && b.vocal)
+        values.push({ value: a.vocal === b.vocal ? 1 : 0, weight: 0.1 });
+    if (!values.length)
+        return null;
+    return clamp(values.reduce((sum, x) => sum + x.value * x.weight, 0) / values.reduce((sum, x) => sum + x.weight, 0));
+}
+function categorySimilarity(a, b) {
+    const domains = jaccard(a.domains, b.domains);
+    const genres = jaccard(a.genres, b.genres);
+    const values = [{ value: domains, weight: 0.4 }, { value: genres, weight: 0.6 }]
+        .filter((x) => x.value !== null);
+    if (!values.length)
+        return null;
+    return values.reduce((s, x) => s + x.value * x.weight, 0) / values.reduce((s, x) => s + x.weight, 0);
+}
+
+// FILE: engine/dist/profile.js
+
+
+function top(entries, n) {
+    return [...entries].map(([value, weight]) => ({ value, weight: Math.round(weight * 100) / 100 }))
+        .sort((a, b) => b.weight - a.weight || a.value.localeCompare(b.value)).slice(0, n);
+}
+function buildTasteProfile(catalog, history) {
+    const byId = new Map(catalog.map(song => [song.id, song]));
+    const ratings = latestRatings(history);
+    const positive = ratings.filter(r => signedWeight[r.kind] > 0 && byId.has(r.songId));
+    const negative = ratings.filter(r => signedWeight[r.kind] < 0 && byId.has(r.songId));
+    const numerators = {};
+    const denominators = {};
+    const genres = new Map(), tags = new Map(), domains = new Map();
+    for (const r of positive) {
+        const song = byId.get(r.songId);
+        const weight = signedWeight[r.kind];
+        for (const key of FEATURE_KEYS) {
+            const v = song.features[key];
+            if (isUnit(v)) {
+                numerators[key] = (numerators[key] ?? 0) + v * weight;
+                denominators[key] = (denominators[key] ?? 0) + weight;
+            }
+        }
+        for (const [items, map] of [[song.genres, genres], [song.tags, tags], [song.domains, domains]]) {
+            for (const term of new Set(items))
+                map.set(term, (map.get(term) ?? 0) + weight);
+        }
+    }
+    const averages = {};
+    for (const key of FEATURE_KEYS)
+        if (denominators[key])
+            averages[key] = Math.round((numerators[key] / denominators[key]) * 1000) / 1000;
+    return {
+        likedCount: positive.length,
+        dislikedCount: negative.length,
+        averages,
+        topGenres: top(genres, 8),
+        topTags: top(tags, 8),
+        domains: top(domains, 6)
+    };
+}
+
+// FILE: engine/dist/probe.js
+
+/** Choose next probe around uncertain preference boundaries, while avoiding repeats and near-duplicates. */
+function nextProbe(catalog, history) {
+    const byId = new Map(catalog.map(s => [s.id, s]));
+    const historyNow = latestRatings(history).filter(r => byId.has(r.songId));
+    const seen = new Set(historyNow.map(r => r.songId));
+    const positives = historyNow.filter(r => signedWeight[r.kind] > 0).map(r => byId.get(r.songId));
+    const recentlySeen = historyNow.slice(-5).map(r => byId.get(r.songId));
+    const choices = [...byId.values()].filter(s => !seen.has(s.id));
+    if (!choices.length)
+        return null;
+    if (!positives.length)
+        return choices.sort((a, b) => a.id.localeCompare(b.id))[0] ?? null;
+    const scored = choices.map(song => {
+        const match = Math.max(0, ...positives.map(s => audioSimilarity(song, s) ?? 0));
+        const uncertain = 1 - Math.abs(match - 0.55) / 0.55;
+        const diversity = recentlySeen.length ? 1 - Math.max(0, ...recentlySeen.map(s => audioSimilarity(song, s) ?? 0)) : 1;
+        // Encourage probing ambiguous music but still near plausible preferences.
+        return { song, value: clamp(uncertain) * 0.7 + clamp(diversity) * 0.3 };
+    }).sort((a, b) => b.value - a.value || a.song.id.localeCompare(b.song.id));
+    return scored[0]?.song ?? null;
+}
+
+// FILE: engine/dist/search.js
+/** Local title/artist/alias search: no live API or automatic transliteration. */
+function normalizeSearchText(input) {
+    return input.normalize("NFKC").toLocaleLowerCase().replace(/[\p{P}\p{S}\p{Z}\s]+/gu, "").trim();
+}
+function searchCatalog(catalog, query, limit = 20) {
+    if (!Number.isInteger(limit) || limit < 1 || limit > 100)
+        throw new RangeError("limit must be 1..100");
+    const key = normalizeSearchText(query);
+    if (!key)
+        return [];
+    return catalog.flatMap(song => {
+        const fields = [song.title, song.artist, ...(song.aliases ?? [])].map(normalizeSearchText);
+        const exact = fields.some(field => field === key);
+        const prefix = fields.some(field => field.startsWith(key));
+        const contains = fields.some(field => field.includes(key));
+        const rank = exact ? 3 : prefix ? 2 : contains ? 1 : 0;
+        return rank ? [{ song, rank }] : [];
+    }).sort((a, b) => b.rank - a.rank || a.song.title.localeCompare(b.song.title) || a.song.id.localeCompare(b.song.id))
+        .slice(0, limit).map(x => x.song);
+}
+
+// FILE: engine/dist/recommender.js
+
+const WEIGHTS = { audio: 0.55, graph: 0.20, category: 0.15, discovery: 0.10 };
+function bestWeightedSimilarity(candidate, positive, fn) {
+    const similarities = positive.flatMap(p => {
+        const score = fn(candidate, p.song);
+        return score === null ? [] : [{ score, weight: Math.sqrt(p.weight) }];
+    }).sort((a, b) => b.score - a.score).slice(0, 3);
+    if (!similarities.length)
+        return null;
+    return clamp(similarities.reduce((sum, x) => sum + x.score * x.weight, 0) / similarities.reduce((sum, x) => sum + x.weight, 0));
+}
+function graphStrength(candidate, likedIds, edges) {
+    let best = null;
+    for (const e of edges) {
+        if (!isUnit(e.strength))
+            continue;
+        if ((e.targetId === candidate.id && likedIds.has(e.sourceId)) || (e.sourceId === candidate.id && likedIds.has(e.targetId))) {
+            best = Math.max(best ?? 0, e.strength);
+        }
+    }
+    return best;
+}
+function scoreCandidate(candidate, positives, negatives, edges) {
+    const likedIds = new Set(positives.map(p => p.song.id));
+    const audio = bestWeightedSimilarity(candidate, positives, audioSimilarity);
+    const category = bestWeightedSimilarity(candidate, positives, categorySimilarity);
+    const graph = graphStrength(candidate, likedIds, edges);
+    const discovery = isUnit(candidate.popularity) ? 1 - candidate.popularity : null;
+    // Never recommend from novelty alone, and never infer a missing feature.
+    if ((audio ?? 0) <= 0 && (category ?? 0) <= 0 && (graph ?? 0) <= 0)
+        return null;
+    const possibleComponents = [
+        { name: "audio", value: audio }, { name: "graph", value: graph }, { name: "category", value: category }, { name: "discovery", value: discovery }
+    ];
+    const components = possibleComponents.filter((x) => x.value !== null);
+    const weighted = components.reduce((sum, x) => sum + x.value * WEIGHTS[x.name], 0);
+    const totalWeight = components.reduce((sum, x) => sum + WEIGHTS[x.name], 0);
+    const penalty = Math.max(0, ...negatives.map(n => audioSimilarity(candidate, n) ?? 0)) * 0.22;
+    return {
+        audio, graph, category, discovery, penalty: +penalty.toFixed(4),
+        score: +clamp(weighted / totalWeight - penalty).toFixed(4),
+        activeComponents: components.map(x => x.name)
+    };
+}
+function bucketFor(x) {
+    if (x.audio !== null)
+        return x.audio >= 0.72 ? "match" : x.audio >= 0.45 ? "adjacent" : "explore";
+    return (x.graph ?? 0) >= 0.6 ? "adjacent" : "explore";
+}
+function reasonsFor(song, details, positives) {
+    const reasons = [];
+    if (details.audio !== null && details.audio >= 0.65)
+        reasons.push("선호곡과 음악적 특징이 비슷함");
+    const common = [...new Set(positives.flatMap(x => x.genres))].filter(t => song.genres.includes(t));
+    if (common.length)
+        reasons.push(`선호 장르: ${common.slice(0, 2).join(", ")}`);
+    if (details.graph !== null && details.graph >= 0.5)
+        reasons.push("유사곡 관계에서 연결된 곡");
+    if (details.discovery !== null && details.discovery >= 0.75)
+        reasons.push("상대적으로 덜 알려진 곡 탐색");
+    if (!reasons.length)
+        reasons.push("새로운 음악 스타일 탐색");
+    return reasons.slice(0, 3);
+}
+/** Pure recommendation function: no network, storage, or AI service required. */
+function recommend(catalog, history, edges = [], limit = 10) {
+    if (!Number.isInteger(limit) || limit <= 0 || limit > 100)
+        throw new RangeError("limit must be an integer in 1..100");
+    const unique = new Map(catalog.map(s => [s.id, s]));
+    const ratings = latestRatings(history);
+    const positive = ratings.filter(r => signedWeight[r.kind] > 0 && unique.has(r.songId))
+        .map(r => ({ song: unique.get(r.songId), weight: signedWeight[r.kind] }));
+    if (!positive.length)
+        return [];
+    const negative = ratings.filter(r => signedWeight[r.kind] < 0 && unique.has(r.songId)).map(r => unique.get(r.songId));
+    const seen = new Set(ratings.map(r => r.songId));
+    const all = [...unique.values()].filter(s => !seen.has(s.id)).flatMap(song => {
+        const score = scoreCandidate(song, positive, negative, edges);
+        return score === null ? [] : [{ song, score, bucket: bucketFor(score), reasons: reasonsFor(song, score, positive.map(x => x.song)) }];
+    });
+    all.sort((a, b) => b.score.score - a.score.score || a.song.id.localeCompare(b.song.id));
+    // 60% strong matches / 30% adjacent / 10% exploration. Fill any missing quota by score.
+    const desired = {
+        match: Math.floor(limit * 0.6),
+        adjacent: Math.floor(limit * 0.3),
+        explore: limit - Math.floor(limit * 0.6) - Math.floor(limit * 0.3)
+    };
+    const chosen = [];
+    const used = new Set(), artistCounts = new Map();
+    function take(song) {
+        if (used.has(song.song.id))
+            return false;
+        const key = song.song.artist.normalize("NFKC").toLocaleLowerCase();
+        if ((artistCounts.get(key) ?? 0) >= 2)
+            return false;
+        chosen.push(song);
+        used.add(song.song.id);
+        artistCounts.set(key, (artistCounts.get(key) ?? 0) + 1);
+        return true;
+    }
+    for (const bucket of ["match", "adjacent", "explore"]) {
+        let picked = 0;
+        for (const song of all) {
+            if (picked >= desired[bucket])
+                break;
+            if (song.bucket === bucket && take(song))
+                picked++;
+        }
+    }
+    for (const song of all) {
+        if (chosen.length >= limit)
+            break;
+        take(song);
+    }
+    return chosen.sort((a, b) => b.score.score - a.score.score || a.song.id.localeCompare(b.song.id));
+}
+
+// FILE: catalog.js
+const CATALOG = [
+  {
+    "id": "muse-001",
+    "title": "アイドル",
+    "artist": "YOASOBI",
+    "aliases": [
+      "아이돌",
+      "Idol",
+      "요아소비"
+    ],
+    "domains": [
+      "jpop",
+      "anime"
+    ],
+    "genres": [
+      "electro-pop"
+    ],
+    "tags": [
+      "synth",
+      "rhythmic",
+      "pop"
+    ],
+    "features": {
+      "energy": 0.81,
+      "brightness": 0.72,
+      "melancholy": 0.4,
+      "complexity": 0.64,
+      "electronic": 0.89,
+      "acoustic": 0.12
+    },
+    "vocal": "female"
+  },
+  {
+    "id": "muse-002",
+    "title": "夜に駆ける",
+    "artist": "YOASOBI",
+    "aliases": [
+      "요루니카케루",
+      "Racing into the Night",
+      "요아소비"
+    ],
+    "domains": [
+      "jpop"
+    ],
+    "genres": [
+      "electro-pop"
+    ],
+    "tags": [
+      "synth",
+      "rhythmic",
+      "pop"
+    ],
+    "features": {
+      "energy": 0.81,
+      "brightness": 0.72,
+      "melancholy": 0.4,
+      "complexity": 0.64,
+      "electronic": 0.89,
+      "acoustic": 0.12
+    },
+    "vocal": "female"
+  },
+  {
+    "id": "muse-003",
+    "title": "群青",
+    "artist": "YOASOBI",
+    "aliases": [
+      "군청",
+      "Gunjou",
+      "요아소비"
+    ],
+    "domains": [
+      "jpop"
+    ],
+    "genres": [
+      "j-pop"
+    ],
+    "tags": [
+      "rhythmic",
+      "bright",
+      "pop"
+    ],
+    "features": {
+      "energy": 0.88,
+      "brightness": 0.9,
+      "melancholy": 0.25,
+      "complexity": 0.52,
+      "electronic": 0.61,
+      "acoustic": 0.38
+    },
+    "vocal": "female"
+  },
+  {
+    "id": "muse-004",
+    "title": "怪物",
+    "artist": "YOASOBI",
+    "aliases": [
+      "괴물",
+      "Kaibutsu",
+      "Monster",
+      "요아소비"
+    ],
+    "domains": [
+      "jpop",
+      "anime"
+    ],
+    "genres": [
+      "electro-rock"
+    ],
+    "tags": [
+      "guitar",
+      "intense",
+      "dark"
+    ],
+    "features": {
+      "energy": 0.9,
+      "brightness": 0.25,
+      "melancholy": 0.72,
+      "complexity": 0.7,
+      "electronic": 0.35,
+      "acoustic": 0.68
+    },
+    "vocal": "female"
+  },
+  {
+    "id": "muse-005",
+    "title": "勇者",
+    "artist": "YOASOBI",
+    "aliases": [
+      "용사",
+      "Yuusha",
+      "The Brave",
+      "요아소비"
+    ],
+    "domains": [
+      "jpop",
+      "anime"
+    ],
+    "genres": [
+      "j-pop"
+    ],
+    "tags": [
+      "dramatic",
+      "cinematic",
+      "emotional"
+    ],
+    "features": {
+      "energy": 0.77,
+      "brightness": 0.42,
+      "melancholy": 0.81,
+      "complexity": 0.82,
+      "electronic": 0.52,
+      "acoustic": 0.62
+    },
+    "vocal": "female"
+  },
+  {
+    "id": "muse-006",
+    "title": "うっせぇわ",
+    "artist": "Ado",
+    "aliases": [
+      "웃세와",
+      "Usseewa",
+      "아도"
+    ],
+    "domains": [
+      "jpop"
+    ],
+    "genres": [
+      "j-rock"
+    ],
+    "tags": [
+      "guitar",
+      "intense",
+      "dark"
+    ],
+    "features": {
+      "energy": 0.9,
+      "brightness": 0.25,
+      "melancholy": 0.72,
+      "complexity": 0.7,
+      "electronic": 0.35,
+      "acoustic": 0.68
+    },
+    "vocal": "female"
+  },
+  {
+    "id": "muse-007",
+    "title": "踊",
+    "artist": "Ado",
+    "aliases": [
+      "오도",
+      "Odo",
+      "아도"
+    ],
+    "domains": [
+      "jpop"
+    ],
+    "genres": [
+      "electro-pop"
+    ],
+    "tags": [
+      "synth",
+      "intense",
+      "dark"
+    ],
+    "features": {
+      "energy": 0.89,
+      "brightness": 0.3,
+      "melancholy": 0.72,
+      "complexity": 0.76,
+      "electronic": 0.94,
+      "acoustic": 0.11
+    },
+    "vocal": "female"
+  },
+  {
+    "id": "muse-008",
+    "title": "新時代",
+    "artist": "Ado",
+    "aliases": [
+      "신시대",
+      "New Genesis",
+      "아도"
+    ],
+    "domains": [
+      "jpop",
+      "anime"
+    ],
+    "genres": [
+      "j-pop"
+    ],
+    "tags": [
+      "rhythmic",
+      "bright",
+      "pop"
+    ],
+    "features": {
+      "energy": 0.88,
+      "brightness": 0.9,
+      "melancholy": 0.25,
+      "complexity": 0.52,
+      "electronic": 0.61,
+      "acoustic": 0.38
+    },
+    "vocal": "female"
+  },
+  {
+    "id": "muse-009",
+    "title": "KICK BACK",
+    "artist": "米津玄師",
+    "aliases": [
+      "킥백",
+      "Kenshi Yonezu",
+      "요네즈 켄시"
+    ],
+    "domains": [
+      "jpop",
+      "anime"
+    ],
+    "genres": [
+      "j-rock"
+    ],
+    "tags": [
+      "guitar",
+      "intense",
+      "dark"
+    ],
+    "features": {
+      "energy": 0.9,
+      "brightness": 0.25,
+      "melancholy": 0.72,
+      "complexity": 0.7,
+      "electronic": 0.35,
+      "acoustic": 0.68
+    },
+    "vocal": "male"
+  },
+  {
+    "id": "muse-010",
+    "title": "Lemon",
+    "artist": "米津玄師",
+    "aliases": [
+      "레몬",
+      "Kenshi Yonezu",
+      "요네즈 켄시"
+    ],
+    "domains": [
+      "jpop"
+    ],
+    "genres": [
+      "ballad"
+    ],
+    "tags": [
+      "melodic",
+      "soft",
+      "emotional"
+    ],
+    "features": {
+      "energy": 0.35,
+      "brightness": 0.65,
+      "melancholy": 0.78,
+      "complexity": 0.44,
+      "electronic": 0.16,
+      "acoustic": 0.76
+    },
+    "vocal": "male"
+  },
+  {
+    "id": "muse-011",
+    "title": "ピースサイン",
+    "artist": "米津玄師",
+    "aliases": [
+      "피스사인",
+      "Peace Sign"
+    ],
+    "domains": [
+      "jpop",
+      "anime"
+    ],
+    "genres": [
+      "j-rock"
+    ],
+    "tags": [
+      "guitar",
+      "upbeat",
+      "band"
+    ],
+    "features": {
+      "energy": 0.89,
+      "brightness": 0.82,
+      "melancholy": 0.3,
+      "complexity": 0.56,
+      "electronic": 0.18,
+      "acoustic": 0.78
+    },
+    "vocal": "male"
+  },
+  {
+    "id": "muse-012",
+    "title": "怪獣の花唄",
+    "artist": "Vaundy",
+    "aliases": [
+      "괴수의 꽃노래",
+      "Kaijuu no Hanauta",
+      "바운디"
+    ],
+    "domains": [
+      "jpop"
+    ],
+    "genres": [
+      "j-rock"
+    ],
+    "tags": [
+      "guitar",
+      "upbeat",
+      "band"
+    ],
+    "features": {
+      "energy": 0.89,
+      "brightness": 0.82,
+      "melancholy": 0.3,
+      "complexity": 0.56,
+      "electronic": 0.18,
+      "acoustic": 0.78
+    },
+    "vocal": "male"
+  },
+  {
+    "id": "muse-013",
+    "title": "踊り子",
+    "artist": "Vaundy",
+    "aliases": [
+      "오도리코",
+      "Odoriko",
+      "바운디"
+    ],
+    "domains": [
+      "jpop"
+    ],
+    "genres": [
+      "j-pop"
+    ],
+    "tags": [
+      "melodic",
+      "soft",
+      "emotional"
+    ],
+    "features": {
+      "energy": 0.35,
+      "brightness": 0.65,
+      "melancholy": 0.78,
+      "complexity": 0.44,
+      "electronic": 0.16,
+      "acoustic": 0.76
+    },
+    "vocal": "male"
+  },
+  {
+    "id": "muse-014",
+    "title": "青と夏",
+    "artist": "Mrs. GREEN APPLE",
+    "aliases": [
+      "푸름과 여름",
+      "Ao to Natsu",
+      "미세스 그린애플"
+    ],
+    "domains": [
+      "jpop"
+    ],
+    "genres": [
+      "j-rock"
+    ],
+    "tags": [
+      "guitar",
+      "upbeat",
+      "band"
+    ],
+    "features": {
+      "energy": 0.89,
+      "brightness": 0.82,
+      "melancholy": 0.3,
+      "complexity": 0.56,
+      "electronic": 0.18,
+      "acoustic": 0.78
+    },
+    "vocal": "male"
+  },
+  {
+    "id": "muse-015",
+    "title": "ライラック",
+    "artist": "Mrs. GREEN APPLE",
+    "aliases": [
+      "라일락",
+      "Lilac",
+      "미세스 그린애플"
+    ],
+    "domains": [
+      "jpop",
+      "anime"
+    ],
+    "genres": [
+      "j-rock"
+    ],
+    "tags": [
+      "guitar",
+      "upbeat",
+      "band"
+    ],
+    "features": {
+      "energy": 0.89,
+      "brightness": 0.82,
+      "melancholy": 0.3,
+      "complexity": 0.56,
+      "electronic": 0.18,
+      "acoustic": 0.78
+    },
+    "vocal": "male"
+  },
+  {
+    "id": "muse-016",
+    "title": "廻廻奇譚",
+    "artist": "Eve",
+    "aliases": [
+      "회회기담",
+      "Kaikai Kitan",
+      "이브"
+    ],
+    "domains": [
+      "jpop",
+      "anime"
+    ],
+    "genres": [
+      "j-rock"
+    ],
+    "tags": [
+      "guitar",
+      "intense",
+      "dark"
+    ],
+    "features": {
+      "energy": 0.9,
+      "brightness": 0.25,
+      "melancholy": 0.72,
+      "complexity": 0.7,
+      "electronic": 0.35,
+      "acoustic": 0.68
+    },
+    "vocal": "male"
+  },
+  {
+    "id": "muse-017",
+    "title": "ドラマツルギー",
+    "artist": "Eve",
+    "aliases": [
+      "드라마투르기",
+      "Dramaturgy",
+      "이브"
+    ],
+    "domains": [
+      "jpop"
+    ],
+    "genres": [
+      "j-rock"
+    ],
+    "tags": [
+      "guitar",
+      "intense",
+      "dark"
+    ],
+    "features": {
+      "energy": 0.9,
+      "brightness": 0.25,
+      "melancholy": 0.72,
+      "complexity": 0.7,
+      "electronic": 0.35,
+      "acoustic": 0.68
+    },
+    "vocal": "male"
+  },
+  {
+    "id": "muse-018",
+    "title": "ただ君に晴れ",
+    "artist": "ヨルシカ",
+    "aliases": [
+      "그저 네게 맑아라",
+      "Tada Kimi ni Hare",
+      "Yorushika",
+      "요루시카"
+    ],
+    "domains": [
+      "jpop"
+    ],
+    "genres": [
+      "j-rock"
+    ],
+    "tags": [
+      "guitar",
+      "upbeat",
+      "band"
+    ],
+    "features": {
+      "energy": 0.89,
+      "brightness": 0.82,
+      "melancholy": 0.3,
+      "complexity": 0.56,
+      "electronic": 0.18,
+      "acoustic": 0.78
+    },
+    "vocal": "female"
+  },
+  {
+    "id": "muse-019",
+    "title": "花に亡霊",
+    "artist": "ヨルシカ",
+    "aliases": [
+      "꽃에 망령",
+      "Hana ni Bourei",
+      "Yorushika",
+      "요루시카"
+    ],
+    "domains": [
+      "jpop"
+    ],
+    "genres": [
+      "ballad"
+    ],
+    "tags": [
+      "melodic",
+      "soft",
+      "emotional"
+    ],
+    "features": {
+      "energy": 0.35,
+      "brightness": 0.65,
+      "melancholy": 0.78,
+      "complexity": 0.44,
+      "electronic": 0.16,
+      "acoustic": 0.76
+    },
+    "vocal": "female"
+  },
+  {
+    "id": "muse-020",
+    "title": "春泥棒",
+    "artist": "ヨルシカ",
+    "aliases": [
+      "봄도둑",
+      "Haru Dorobou",
+      "Yorushika",
+      "요루시카"
+    ],
+    "domains": [
+      "jpop"
+    ],
+    "genres": [
+      "j-pop"
+    ],
+    "tags": [
+      "melodic",
+      "soft",
+      "emotional"
+    ],
+    "features": {
+      "energy": 0.35,
+      "brightness": 0.65,
+      "melancholy": 0.78,
+      "complexity": 0.44,
+      "electronic": 0.16,
+      "acoustic": 0.76
+    },
+    "vocal": "female"
+  },
+  {
+    "id": "muse-021",
+    "title": "秒針を噛む",
+    "artist": "ずっと真夜中でいいのに。",
+    "aliases": [
+      "초침을 깨물다",
+      "Byoushin wo Kamu",
+      "ZUTOMAYO",
+      "즛토마요"
+    ],
+    "domains": [
+      "jpop"
+    ],
+    "genres": [
+      "j-pop"
+    ],
+    "tags": [
+      "rhythmic",
+      "groovy",
+      "complex"
+    ],
+    "features": {
+      "energy": 0.74,
+      "brightness": 0.75,
+      "melancholy": 0.34,
+      "complexity": 0.82,
+      "electronic": 0.36,
+      "acoustic": 0.64
+    },
+    "vocal": "female"
+  },
+  {
+    "id": "muse-022",
+    "title": "お勉強しといてよ",
+    "artist": "ずっと真夜中でいいのに。",
+    "aliases": [
+      "공부해 둬",
+      "Obenkyou Shitoiteyo",
+      "ZUTOMAYO",
+      "즛토마요"
+    ],
+    "domains": [
+      "jpop"
+    ],
+    "genres": [
+      "j-pop"
+    ],
+    "tags": [
+      "rhythmic",
+      "groovy",
+      "complex"
+    ],
+    "features": {
+      "energy": 0.74,
+      "brightness": 0.75,
+      "melancholy": 0.34,
+      "complexity": 0.82,
+      "electronic": 0.36,
+      "acoustic": 0.64
+    },
+    "vocal": "female"
+  },
+  {
+    "id": "muse-023",
+    "title": "紅蓮華",
+    "artist": "LiSA",
+    "aliases": [
+      "홍련화",
+      "Gurenge",
+      "리사"
+    ],
+    "domains": [
+      "jpop",
+      "anime"
+    ],
+    "genres": [
+      "j-rock"
+    ],
+    "tags": [
+      "guitar",
+      "upbeat",
+      "band"
+    ],
+    "features": {
+      "energy": 0.89,
+      "brightness": 0.82,
+      "melancholy": 0.3,
+      "complexity": 0.56,
+      "electronic": 0.18,
+      "acoustic": 0.78
+    },
+    "vocal": "female"
+  },
+  {
+    "id": "muse-024",
+    "title": "炎",
+    "artist": "LiSA",
+    "aliases": [
+      "호무라",
+      "Homura",
+      "리사"
+    ],
+    "domains": [
+      "jpop",
+      "anime"
+    ],
+    "genres": [
+      "ballad"
+    ],
+    "tags": [
+      "melodic",
+      "soft",
+      "emotional"
+    ],
+    "features": {
+      "energy": 0.35,
+      "brightness": 0.65,
+      "melancholy": 0.78,
+      "complexity": 0.44,
+      "electronic": 0.16,
+      "acoustic": 0.76
+    },
+    "vocal": "female"
+  },
+  {
+    "id": "muse-025",
+    "title": "crossing field",
+    "artist": "LiSA",
+    "aliases": [
+      "크로싱 필드",
+      "리사"
+    ],
+    "domains": [
+      "jpop",
+      "anime"
+    ],
+    "genres": [
+      "j-rock"
+    ],
+    "tags": [
+      "guitar",
+      "upbeat",
+      "band"
+    ],
+    "features": {
+      "energy": 0.89,
+      "brightness": 0.82,
+      "melancholy": 0.3,
+      "complexity": 0.56,
+      "electronic": 0.18,
+      "acoustic": 0.78
+    },
+    "vocal": "female"
+  },
+  {
+    "id": "muse-026",
+    "title": "残響散歌",
+    "artist": "Aimer",
+    "aliases": [
+      "잔향산가",
+      "Zankyou Sanka",
+      "에메"
+    ],
+    "domains": [
+      "jpop",
+      "anime"
+    ],
+    "genres": [
+      "j-rock"
+    ],
+    "tags": [
+      "dramatic",
+      "cinematic",
+      "emotional"
+    ],
+    "features": {
+      "energy": 0.77,
+      "brightness": 0.42,
+      "melancholy": 0.81,
+      "complexity": 0.82,
+      "electronic": 0.52,
+      "acoustic": 0.62
+    },
+    "vocal": "female"
+  },
+  {
+    "id": "muse-027",
+    "title": "カタオモイ",
+    "artist": "Aimer",
+    "aliases": [
+      "짝사랑",
+      "Kataomoi",
+      "에메"
+    ],
+    "domains": [
+      "jpop"
+    ],
+    "genres": [
+      "ballad"
+    ],
+    "tags": [
+      "melodic",
+      "soft",
+      "emotional"
+    ],
+    "features": {
+      "energy": 0.35,
+      "brightness": 0.65,
+      "melancholy": 0.78,
+      "complexity": 0.44,
+      "electronic": 0.16,
+      "acoustic": 0.76
+    },
+    "vocal": "female"
+  },
+  {
+    "id": "muse-028",
+    "title": "Brave Shine",
+    "artist": "Aimer",
+    "aliases": [
+      "브레이브 샤인",
+      "에메"
+    ],
+    "domains": [
+      "jpop",
+      "anime"
+    ],
+    "genres": [
+      "j-pop"
+    ],
+    "tags": [
+      "dramatic",
+      "cinematic",
+      "emotional"
+    ],
+    "features": {
+      "energy": 0.77,
+      "brightness": 0.42,
+      "melancholy": 0.81,
+      "complexity": 0.82,
+      "electronic": 0.52,
+      "acoustic": 0.62
+    },
+    "vocal": "female"
+  },
+  {
+    "id": "muse-029",
+    "title": "シュガーソングとビターステップ",
+    "artist": "UNISON SQUARE GARDEN",
+    "aliases": [
+      "슈가송과 비터스텝",
+      "Sugar Song to Bitter Step"
+    ],
+    "domains": [
+      "jpop",
+      "anime"
+    ],
+    "genres": [
+      "j-rock"
+    ],
+    "tags": [
+      "guitar",
+      "upbeat",
+      "band"
+    ],
+    "features": {
+      "energy": 0.89,
+      "brightness": 0.82,
+      "melancholy": 0.3,
+      "complexity": 0.56,
+      "electronic": 0.18,
+      "acoustic": 0.78
+    },
+    "vocal": "male"
+  },
+  {
+    "id": "muse-030",
+    "title": "SPECIALZ",
+    "artist": "King Gnu",
+    "aliases": [
+      "스페셜즈",
+      "킹누"
+    ],
+    "domains": [
+      "jpop",
+      "anime"
+    ],
+    "genres": [
+      "electro-rock"
+    ],
+    "tags": [
+      "synth",
+      "intense",
+      "dark"
+    ],
+    "features": {
+      "energy": 0.89,
+      "brightness": 0.3,
+      "melancholy": 0.72,
+      "complexity": 0.76,
+      "electronic": 0.94,
+      "acoustic": 0.11
+    },
+    "vocal": "male"
+  },
+  {
+    "id": "muse-031",
+    "title": "Bling-Bang-Bang-Born",
+    "artist": "Creepy Nuts",
+    "aliases": [
+      "블링 뱅 뱅 본",
+      "크리피 너츠"
+    ],
+    "domains": [
+      "jpop",
+      "anime"
+    ],
+    "genres": [
+      "hip-hop"
+    ],
+    "tags": [
+      "rhythmic",
+      "bright",
+      "pop"
+    ],
+    "features": {
+      "energy": 0.88,
+      "brightness": 0.9,
+      "melancholy": 0.25,
+      "complexity": 0.52,
+      "electronic": 0.61,
+      "acoustic": 0.38
+    },
+    "vocal": "male"
+  },
+  {
+    "id": "muse-032",
+    "title": "オトノケ",
+    "artist": "Creepy Nuts",
+    "aliases": [
+      "오토노케",
+      "Otonoke",
+      "크리피 너츠"
+    ],
+    "domains": [
+      "jpop",
+      "anime"
+    ],
+    "genres": [
+      "hip-hop"
+    ],
+    "tags": [
+      "synth",
+      "intense",
+      "dark"
+    ],
+    "features": {
+      "energy": 0.89,
+      "brightness": 0.3,
+      "melancholy": 0.72,
+      "complexity": 0.76,
+      "electronic": 0.94,
+      "acoustic": 0.11
+    },
+    "vocal": "male"
+  },
+  {
+    "id": "muse-033",
+    "title": "天体観測",
+    "artist": "BUMP OF CHICKEN",
+    "aliases": [
+      "천체관측",
+      "Tentai Kansoku"
+    ],
+    "domains": [
+      "jpop"
+    ],
+    "genres": [
+      "j-rock"
+    ],
+    "tags": [
+      "guitar",
+      "upbeat",
+      "band"
+    ],
+    "features": {
+      "energy": 0.89,
+      "brightness": 0.82,
+      "melancholy": 0.3,
+      "complexity": 0.56,
+      "electronic": 0.18,
+      "acoustic": 0.78
+    },
+    "vocal": "male"
+  },
+  {
+    "id": "muse-034",
+    "title": "ヴァンパイア",
+    "artist": "DECO*27",
+    "aliases": [
+      "뱀파이어",
+      "Vampire",
+      "데코니나"
+    ],
+    "domains": [
+      "vocaloid"
+    ],
+    "genres": [
+      "vocaloid-pop"
+    ],
+    "tags": [
+      "synthetic-vocal",
+      "fast",
+      "electronic"
+    ],
+    "features": {
+      "energy": 0.94,
+      "brightness": 0.63,
+      "melancholy": 0.47,
+      "complexity": 0.74,
+      "electronic": 0.94,
+      "acoustic": 0.08
+    },
+    "vocal": "synthetic"
+  },
+  {
+    "id": "muse-035",
+    "title": "ヒバナ",
+    "artist": "DECO*27",
+    "aliases": [
+      "히바나",
+      "Hibana",
+      "데코니나"
+    ],
+    "domains": [
+      "vocaloid"
+    ],
+    "genres": [
+      "vocaloid-rock"
+    ],
+    "tags": [
+      "synthetic-vocal",
+      "fast",
+      "electronic"
+    ],
+    "features": {
+      "energy": 0.94,
+      "brightness": 0.63,
+      "melancholy": 0.47,
+      "complexity": 0.74,
+      "electronic": 0.94,
+      "acoustic": 0.08
+    },
+    "vocal": "synthetic"
+  },
+  {
+    "id": "muse-036",
+    "title": "ラビットホール",
+    "artist": "DECO*27",
+    "aliases": [
+      "래빗 홀",
+      "Rabbit Hole",
+      "데코니나"
+    ],
+    "domains": [
+      "vocaloid"
+    ],
+    "genres": [
+      "vocaloid-pop"
+    ],
+    "tags": [
+      "synthetic-vocal",
+      "fast",
+      "electronic"
+    ],
+    "features": {
+      "energy": 0.94,
+      "brightness": 0.63,
+      "melancholy": 0.47,
+      "complexity": 0.74,
+      "electronic": 0.94,
+      "acoustic": 0.08
+    },
+    "vocal": "synthetic"
+  },
+  {
+    "id": "muse-037",
+    "title": "神っぽいな",
+    "artist": "ピノキオピー",
+    "aliases": [
+      "신 같네",
+      "Kamippoi na",
+      "PinocchioP"
+    ],
+    "domains": [
+      "vocaloid"
+    ],
+    "genres": [
+      "vocaloid-pop"
+    ],
+    "tags": [
+      "synthetic-vocal",
+      "fast",
+      "electronic"
+    ],
+    "features": {
+      "energy": 0.94,
+      "brightness": 0.63,
+      "melancholy": 0.47,
+      "complexity": 0.74,
+      "electronic": 0.94,
+      "acoustic": 0.08
+    },
+    "vocal": "synthetic"
+  },
+  {
+    "id": "muse-038",
+    "title": "転生林檎",
+    "artist": "ピノキオピー",
+    "aliases": [
+      "전생사과",
+      "Tensei Ringo",
+      "PinocchioP"
+    ],
+    "domains": [
+      "vocaloid"
+    ],
+    "genres": [
+      "vocaloid-pop"
+    ],
+    "tags": [
+      "synthetic-vocal",
+      "fast",
+      "electronic"
+    ],
+    "features": {
+      "energy": 0.94,
+      "brightness": 0.63,
+      "melancholy": 0.47,
+      "complexity": 0.74,
+      "electronic": 0.94,
+      "acoustic": 0.08
+    },
+    "vocal": "synthetic"
+  },
+  {
+    "id": "muse-039",
+    "title": "ローリンガール",
+    "artist": "wowaka",
+    "aliases": [
+      "롤링걸",
+      "Rolling Girl"
+    ],
+    "domains": [
+      "vocaloid"
+    ],
+    "genres": [
+      "vocaloid-rock"
+    ],
+    "tags": [
+      "synthetic-vocal",
+      "emotional",
+      "electronic"
+    ],
+    "features": {
+      "energy": 0.78,
+      "brightness": 0.44,
+      "melancholy": 0.82,
+      "complexity": 0.73,
+      "electronic": 0.71,
+      "acoustic": 0.35
+    },
+    "vocal": "synthetic"
+  },
+  {
+    "id": "muse-040",
+    "title": "メルト",
+    "artist": "ryo (supercell)",
+    "aliases": [
+      "멜트",
+      "Melt"
+    ],
+    "domains": [
+      "vocaloid"
+    ],
+    "genres": [
+      "vocaloid-pop"
+    ],
+    "tags": [
+      "synthetic-vocal",
+      "emotional",
+      "electronic"
+    ],
+    "features": {
+      "energy": 0.78,
+      "brightness": 0.44,
+      "melancholy": 0.82,
+      "complexity": 0.73,
+      "electronic": 0.71,
+      "acoustic": 0.35
+    },
+    "vocal": "synthetic"
+  },
+  {
+    "id": "muse-041",
+    "title": "アスノヨゾラ哨戒班",
+    "artist": "Orangestar",
+    "aliases": [
+      "아스노요조라 초계반",
+      "Asu no Yozora Shoukaihan"
+    ],
+    "domains": [
+      "vocaloid"
+    ],
+    "genres": [
+      "vocaloid-pop"
+    ],
+    "tags": [
+      "synthetic-vocal",
+      "emotional",
+      "electronic"
+    ],
+    "features": {
+      "energy": 0.78,
+      "brightness": 0.44,
+      "melancholy": 0.82,
+      "complexity": 0.73,
+      "electronic": 0.71,
+      "acoustic": 0.35
+    },
+    "vocal": "synthetic"
+  },
+  {
+    "id": "muse-042",
+    "title": "KING",
+    "artist": "Kanaria",
+    "aliases": [
+      "킹",
+      "카나리아"
+    ],
+    "domains": [
+      "vocaloid"
+    ],
+    "genres": [
+      "vocaloid-pop"
+    ],
+    "tags": [
+      "synthetic-vocal",
+      "fast",
+      "electronic"
+    ],
+    "features": {
+      "energy": 0.94,
+      "brightness": 0.63,
+      "melancholy": 0.47,
+      "complexity": 0.74,
+      "electronic": 0.94,
+      "acoustic": 0.08
+    },
+    "vocal": "synthetic"
+  },
+  {
+    "id": "muse-043",
+    "title": "カゲロウデイズ",
+    "artist": "じん",
+    "aliases": [
+      "아지랑이 데이즈",
+      "Kagerou Days",
+      "Jin"
+    ],
+    "domains": [
+      "vocaloid"
+    ],
+    "genres": [
+      "vocaloid-rock"
+    ],
+    "tags": [
+      "synthetic-vocal",
+      "fast",
+      "electronic"
+    ],
+    "features": {
+      "energy": 0.94,
+      "brightness": 0.63,
+      "melancholy": 0.47,
+      "complexity": 0.74,
+      "electronic": 0.94,
+      "acoustic": 0.08
+    },
+    "vocal": "synthetic"
+  },
+  {
+    "id": "muse-044",
+    "title": "MEGALOVANIA",
+    "artist": "Toby Fox",
+    "aliases": [
+      "메갈로바니아",
+      "Undertale",
+      "언더테일",
+      "토비 폭스"
+    ],
+    "domains": [
+      "game_ost"
+    ],
+    "genres": [
+      "game-electronic"
+    ],
+    "tags": [
+      "instrumental",
+      "synth",
+      "game"
+    ],
+    "features": {
+      "energy": 0.81,
+      "brightness": 0.52,
+      "melancholy": 0.43,
+      "complexity": 0.77,
+      "electronic": 0.98,
+      "acoustic": 0.09
+    },
+    "vocal": "instrumental"
+  },
+  {
+    "id": "muse-045",
+    "title": "Hopes and Dreams",
+    "artist": "Toby Fox",
+    "aliases": [
+      "희망과 꿈",
+      "Undertale",
+      "언더테일",
+      "토비 폭스"
+    ],
+    "domains": [
+      "game_ost"
+    ],
+    "genres": [
+      "game-orchestral"
+    ],
+    "tags": [
+      "instrumental",
+      "cinematic",
+      "game"
+    ],
+    "features": {
+      "energy": 0.71,
+      "brightness": 0.4,
+      "melancholy": 0.67,
+      "complexity": 0.87,
+      "electronic": 0.29,
+      "acoustic": 0.72
+    },
+    "vocal": "instrumental"
+  },
+  {
+    "id": "muse-046",
+    "title": "Greenpath",
+    "artist": "Christopher Larkin",
+    "aliases": [
+      "그린패스",
+      "Hollow Knight",
+      "할로우 나이트"
+    ],
+    "domains": [
+      "game_ost"
+    ],
+    "genres": [
+      "ambient"
+    ],
+    "tags": [
+      "instrumental",
+      "atmospheric",
+      "soft"
+    ],
+    "features": {
+      "energy": 0.23,
+      "brightness": 0.47,
+      "melancholy": 0.72,
+      "complexity": 0.53,
+      "electronic": 0.6,
+      "acoustic": 0.58
+    },
+    "vocal": "instrumental"
+  },
+  {
+    "id": "muse-047",
+    "title": "Resurrections",
+    "artist": "Lena Raine",
+    "aliases": [
+      "셀레스트",
+      "Celeste"
+    ],
+    "domains": [
+      "game_ost"
+    ],
+    "genres": [
+      "ambient"
+    ],
+    "tags": [
+      "instrumental",
+      "atmospheric",
+      "soft"
+    ],
+    "features": {
+      "energy": 0.23,
+      "brightness": 0.47,
+      "melancholy": 0.72,
+      "complexity": 0.53,
+      "electronic": 0.6,
+      "acoustic": 0.58
+    },
+    "vocal": "instrumental"
+  },
+  {
+    "id": "muse-048",
+    "title": "Rex Incognito",
+    "artist": "HOYO-MiX",
+    "aliases": [
+      "렉스 인코그니토",
+      "Genshin Impact",
+      "원신",
+      "호요믹스"
+    ],
+    "domains": [
+      "game_ost"
+    ],
+    "genres": [
+      "game-orchestral"
+    ],
+    "tags": [
+      "instrumental",
+      "cinematic",
+      "game"
+    ],
+    "features": {
+      "energy": 0.71,
+      "brightness": 0.4,
+      "melancholy": 0.67,
+      "complexity": 0.87,
+      "electronic": 0.29,
+      "acoustic": 0.72
+    },
+    "vocal": "instrumental"
+  },
+  {
+    "id": "muse-049",
+    "title": "U.N. Owen Was Her?",
+    "artist": "ZUN",
+    "aliases": [
+      "U.N. 오웬은 그녀인가",
+      "Touhou",
+      "동방"
+    ],
+    "domains": [
+      "game_ost",
+      "doujin"
+    ],
+    "genres": [
+      "game-electronic"
+    ],
+    "tags": [
+      "instrumental",
+      "synth",
+      "game"
+    ],
+    "features": {
+      "energy": 0.81,
+      "brightness": 0.52,
+      "melancholy": 0.43,
+      "complexity": 0.77,
+      "electronic": 0.98,
+      "acoustic": 0.09
+    },
+    "vocal": "instrumental"
+  },
+  {
+    "id": "muse-050",
+    "title": "Last Surprise",
+    "artist": "Shoji Meguro",
+    "aliases": [
+      "라스트 서프라이즈",
+      "Persona 5",
+      "페르소나 5",
+      "Lyn"
+    ],
+    "domains": [
+      "game_ost"
+    ],
+    "genres": [
+      "jazz"
+    ],
+    "tags": [
+      "rhythmic",
+      "groovy",
+      "complex"
+    ],
+    "features": {
+      "energy": 0.74,
+      "brightness": 0.75,
+      "melancholy": 0.34,
+      "complexity": 0.82,
+      "electronic": 0.36,
+      "acoustic": 0.64
+    },
+    "vocal": "female"
+  },
+  {
+    "id": "muse-051",
+    "title": "Unwelcome School",
+    "artist": "Mitsukiyo",
+    "aliases": [
+      "언웰컴 스쿨",
+      "Blue Archive",
+      "블루 아카이브",
+      "미츠키요"
+    ],
+    "domains": [
+      "game_ost"
+    ],
+    "genres": [
+      "game-electronic"
+    ],
+    "tags": [
+      "instrumental",
+      "synth",
+      "game"
+    ],
+    "features": {
+      "energy": 0.81,
+      "brightness": 0.52,
+      "melancholy": 0.43,
+      "complexity": 0.77,
+      "electronic": 0.98,
+      "acoustic": 0.09
+    },
+    "vocal": "instrumental"
+  },
+  {
+    "id": "muse-052",
+    "title": "Weight of the World",
+    "artist": "Keiichi Okabe",
+    "aliases": [
+      "세계의 무게",
+      "NieR:Automata",
+      "니어 오토마타"
+    ],
+    "domains": [
+      "game_ost"
+    ],
+    "genres": [
+      "game-orchestral"
+    ],
+    "tags": [
+      "dramatic",
+      "cinematic",
+      "emotional"
+    ],
+    "features": {
+      "energy": 0.77,
+      "brightness": 0.42,
+      "melancholy": 0.81,
+      "complexity": 0.82,
+      "electronic": 0.52,
+      "acoustic": 0.62
+    },
+    "vocal": "female"
+  }
+];
+
+// FILE: app.js
+
+
+const STORAGE_KEY = 'project-muse-alpha02-session-v1';
+const STEP_TITLES = {select:'선호곡 선택',probe:'취향 테스트',results:'추천 결과'};
+const DOMAIN_NAMES = {jpop:'J-POP',anime:'애니송',vocaloid:'보컬로이드',game_ost:'게임 OST',doujin:'동인 음악',other:'기타'};
+const FEATURE_NAMES = {energy:'에너지',brightness:'밝은 분위기',melancholy:'감성적인 분위기',complexity:'복합적인 구성',electronic:'전자음',acoustic:'어쿠스틱'};
+const GENRE_NAMES = {'j-rock':'J-ROCK','j-pop':'J-POP','electro-pop':'일렉트로 팝','electro-rock':'일렉트로 록','ballad':'발라드','hip-hop':'힙합','vocaloid-pop':'보컬로이드 팝','vocaloid-rock':'보컬로이드 록','game-electronic':'게임 전자음악','game-orchestral':'게임 오케스트라','ambient':'앰비언트','jazz':'재즈'};
+const RATINGS = [{kind:'love',label:'매우 좋아요',symbol:'♥'},{kind:'like',label:'좋아요',symbol:'↗'},{kind:'neutral',label:'보통이에요',symbol:'─'},{kind:'dislike',label:'별로예요',symbol:'×'}];
+const CATALOG_IDS = new Set(CATALOG.map(x=>x.id));
+const app = document.querySelector('#app');
+const steps = document.querySelector('#steps');
+const initialSession = () => ({seeds:[], probes:[], feedback:[]});
+let session = readSession();
+let query = '';
+let category = 'all';
+let pageLimit = 18;
+
+function readSession() {
+  try {
+    const parsed = JSON.parse(localStorage.getItem(STORAGE_KEY));
+    if (!parsed || !Array.isArray(parsed.seeds) || !Array.isArray(parsed.probes) || !Array.isArray(parsed.feedback)) return initialSession();
+    const seeds = [...new Set(parsed.seeds)].filter(id=>typeof id==='string' && CATALOG_IDS.has(id)).slice(0,10);
+    const clean = entries => entries.filter(x=>x && CATALOG_IDS.has(x.songId) && ['love','like','neutral','dislike','skip'].includes(x.kind)).slice(0,100);
+    return { seeds, probes:clean(parsed.probes).slice(0,10), feedback:clean(parsed.feedback) };
+  } catch { return initialSession(); }
+}
+function save() { try { localStorage.setItem(STORAGE_KEY, JSON.stringify(session)); } catch { /* Private/blocked storage: session still works in memory */ } }
+function history() {
+  return [...session.seeds.map(songId=>({songId,kind:'seed'})),...session.probes,...session.feedback];
+}
+function esc(s='') { return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function route() { const raw = location.hash.replace(/^#/, '').replace(/^\//,''); return ['select','probe','results'].includes(raw) ? raw : 'select'; }
+function navigate(next) { if(location.hash !== '#'+next) location.hash = '#'+next; render(); window.scrollTo({top:0,behavior:'instant'}); }
+function songById(id) { return CATALOG.find(s=>s.id===id); }
+function prettyDomain(song) { return DOMAIN_NAMES[song.domains.find(d=>d!=='jpop')] || 'J-POP'; }
+function art(song) { const main= song.domains.includes('vocaloid') ? 'vocaloid' : song.domains.includes('game_ost')?'game_ost':song.domains.includes('anime')?'anime':'jpop'; const symbol = ({jpop:'♪',anime:'✧',vocaloid:'♮',game_ost:'◈'})[main]; return `<span class="artwork art-${main}" aria-hidden="true"><span class="art-symbol">${symbol}</span></span>`; }
+function listenUrl(song) { return 'https://www.youtube.com/results?search_query=' + encodeURIComponent(song.artist+' '+song.title+' official'); }
+function navRender(active) {
+  const ids=['select','probe','results'];
+  steps.innerHTML=ids.map((s,i)=>{
+    const st=ids.indexOf(active);
+    const cls=i===st?'active':i<st?'done':'';
+    const canGo=s==='select'||(s==='probe'&&session.seeds.length>=5)||(s==='results'&&session.probes.length>=10);
+    return `${i?'<span class="step-line" aria-hidden="true"></span>':''}<a class="step-link ${cls}" href="${canGo?'#'+s:'#'+active}" aria-current="${i===st?'step':'false'}"><span class="step-number">0${i+1}</span><span>${STEP_TITLES[s]}</span></a>`;
+  }).join('');
+}
+function filterCatalog() {
+  let items = query.trim() ? searchCatalog(CATALOG,query,100) : CATALOG;
+  if(category!=='all') items=items.filter(s=>s.domains.includes(category));
+  return items;
+}
+function tilesRender() {
+  const items=filterCatalog();
+  const visible=items.slice(0,pageLimit);
+  const selected=new Set(session.seeds);
+  return `<div class="catalog-note"><span>${query?'검색 결과':'수록 곡'} <strong>${items.length}</strong>곡</span><span>곡명을 누르면 선택돼요</span></div>
+  ${visible.length?`<div class="song-grid">${visible.map(song => `<button class="song-tile ${selected.has(song.id)?'selected':''}" type="button" data-action="toggle" data-id="${song.id}" aria-pressed="${selected.has(song.id)}">
+    ${art(song)}<span class="song-body"><span class="song-title" title="${esc(song.title)}">${esc(song.title)}</span><span class="song-artist">${esc(song.artist)}</span><span class="song-type">${esc(prettyDomain(song))}</span></span><span class="checkmark">✓</span>
+  </button>`).join('')}</div>`:`<div class="empty-results">검색 결과가 없어요.<br>다른 표기나 아티스트명으로 찾아보세요.</div>`}
+  ${items.length>pageLimit?`<div style="text-align:center;margin-top:20px"><button class="secondary-btn" type="button" data-action="more">더 보기 <span style="color:var(--muted)">${items.length-pageLimit}곡 남음</span></button></div>`:''}`;
+}
+function selectionDetail() {
+  const n=session.seeds.length;
+  return `<div class="side-top"><h3>내가 고른 노래</h3><span class="side-count">${n} / 10</span></div>
+    <div class="meter"><div class="meter-fill" style="width:${Math.min(n/5*100,100)}%"></div></div>
+    <p class="small-muted">${n<5?`최소 5곡이 필요해요. <strong>${5-n}곡</strong> 더 골라주세요.`:'준비됐어요. 최대 10곡까지 고를 수 있어요.'}</p>
+    <div class="selected-list">${n?session.seeds.map((id,i)=>{const s=songById(id);return `<div class="selected-item"><span class="selected-num">${String(i+1).padStart(2,'0')}</span><span class="selected-name" title="${esc(s.title)}">${esc(s.title)}</span><button class="remove-btn" type="button" data-action="toggle" data-id="${id}" aria-label="${esc(s.title)} 선택 해제">×</button></div>`;}).join(''):`<div class="empty-selection">고른 노래가 여기에 표시돼요.</div>`}</div>
+    <button class="primary-btn full" data-action="start" type="button" ${n<5?'disabled':''}>다음: 취향 테스트 <span aria-hidden="true">→</span></button>
+    <p class="rule-note">로그인 없이 진행할 수 있어요. 선택 내역은 이 브라우저에만 저장됩니다.</p>`;
+}
+function renderSelect() {
+  app.innerHTML=`<section class="hero"><div class="eyebrow">FIND YOUR FREQUENCY</div><h1>좋아하는 노래에서<br><em>다음 최애곡</em>까지.</h1>
+    <p class="lead">익숙한 곡 5개부터 시작해요. 작은 선택들이 모여 당신만의 음악 취향 지도가 됩니다.</p>
+    <div class="info-line"><span>파일럿 카탈로그 <strong>${CATALOG.length}곡</strong></span><span><strong>J-POP / 애니송 / 보컬로이드 / OST</strong></span><span>가입 필요 없음</span></div>
+  </section>
+  <div class="main-grid"><section aria-label="좋아하는 노래 검색">
+    <div class="section-label"><div><div class="eyebrow">STEP 01</div><h2>좋아하는 곡을 골라주세요</h2></div></div>
+    <label class="search-field"><span class="search-icon" aria-hidden="true">⌕</span><input id="song-search" type="search" placeholder="곡명, 아티스트, 한국어 표기 검색" autocomplete="off" value="${esc(query)}" aria-label="곡 검색"></label>
+    <div class="chips" aria-label="카테고리 필터">${[['all','전체'],['jpop','J-POP'],['anime','애니송'],['vocaloid','보컬로이드'],['game_ost','게임 OST']].map(([id,label])=>`<button type="button" class="chip ${category===id?'active':''}" data-action="category" data-id="${id}" aria-pressed="${category===id}">${label}</button>`).join('')}</div>
+    <div id="catalog-results">${tilesRender()}</div>
+  </section><aside class="side-panel" aria-label="선택한 노래" id="selected-summary">${selectionDetail()}</aside></div>
+  <div class="mobile-cta"><div class="mobile-meta"><strong>${session.seeds.length}</strong><span> / 10곡 선택<br>최소 5곡</span></div><button class="primary-btn" data-action="start" type="button" ${session.seeds.length<5?'disabled':''}>취향 테스트 →</button></div>`;
+}
+function renderProbe() {
+  const n=session.probes.length;
+  const probe=nextProbe(CATALOG,history());
+  if(!probe) { app.innerHTML='<div class="empty-results">추가 테스트에 사용할 곡이 없습니다. 선택한 노래를 변경해 주세요.<br><a href="#select">처음으로</a></div>'; return; }
+  app.innerHTML=`<div class="center-stage">
+    <header class="stage-head"><div class="eyebrow">STEP 02 / TASTE CHECK</div><h1>조금 더 <em>알아볼까요?</em></h1><p class="lead" style="margin:0 auto">취향이 비슷할 수도, 전혀 다를 수도 있는 노래들이에요.<br>잘 모르겠다면 건너뛰어도 괜찮아요.</p></header>
+    <div class="progress-head"><span>취향 테스트</span><strong>${String(n+1).padStart(2,'0')} / 10</strong></div>
+    <div class="progress-track"><div style="width:${n/10*100}%"></div></div>
+    <article class="probe-card"><div class="track-number">TRACK ${String(n+1).padStart(2,'0')}</div>${art(probe)}
+      <div class="probe-title">${esc(probe.title)}</div><div class="probe-artist">${esc(probe.artist)}</div><span class="pill-label">${esc(prettyDomain(probe))}</span>
+      <a class="listen-link" href="${listenUrl(probe)}" target="_blank" rel="noopener noreferrer">유튜브에서 이 곡 듣기 ↗</a>
+    </article>
+    <div class="quiz-question">이 곡은 얼마나 마음에 드나요?</div>
+    <div class="rating-grid">${RATINGS.map(x=>`<button class="rating-btn" data-action="rate-probe" data-id="${probe.id}" data-kind="${x.kind}" type="button"><span class="rating-icon" aria-hidden="true">${x.symbol}</span><span>${x.label}</span></button>`).join('')}</div>
+    <div class="skip-wrap"><button class="skip-btn" data-action="rate-probe" data-id="${probe.id}" data-kind="skip" type="button">아직 안 들어봤어요 / 판단 보류 →</button></div>
+    <button class="secondary-btn back-btn" data-action="back-select" type="button">← 이전: 선호곡 선택</button>
+    <div class="callout">곡은 자동 재생되지 않습니다. 재생 링크는 유튜브 검색 결과로 이동하며, 음원 자체는 제공하지 않아요.</div>
+  </div>`;
+}
+function tasteHtml(profile) {
+ const entries=Object.entries(profile.averages).filter(([,value])=>Number.isFinite(value));
+ const top=profile.topGenres.slice(0,4);
+ return `<section class="profile-panel"><div class="eyebrow">YOUR MUSIC DNA</div><div class="profile-title">내 취향의 윤곽</div>
+   <div class="small-muted">좋아요 ${profile.likedCount}곡 · 별로 ${profile.dislikedCount}곡</div>
+   <div class="profile-rows">${entries.length?entries.map(([key,value])=>`<div><div class="profile-line"><span>${FEATURE_NAMES[key]||esc(key)}</span><strong>${Math.round(value*100)}</strong></div><div class="profile-bar"><div style="width:${Math.round(value*100)}%"></div></div></div>`).join(''):'평가가 더 필요합니다.'}</div>
+   <div class="small-muted">선호 장르</div><div class="genre-tags">${top.length?top.map(x=>`<span class="genre-tag">${esc(GENRE_NAMES[x.value]||x.value)}</span>`).join(''):'<span class="genre-tag">분석 중</span>'}</div>
+   <div class="callout">이 수치는 실제 음원 측정치가 아닌 파일럿용 수동 태그 기반 취향 지수입니다. 음악적 정확도를 보장하지 않습니다.</div>
+ </section>`;
+}
+function recommendationCard(rec,index) {
+ const s=rec.song;
+ return `<article class="rec-card"><span class="rec-rank">${String(index+1).padStart(2,'0')}</span>${art(s)}
+ <div class="rec-info"><div class="rec-song" title="${esc(s.title)}">${esc(s.title)}</div><div class="rec-artist">${esc(s.artist)} · ${esc(prettyDomain(s))}</div><div class="rec-reason">${esc(rec.reasons.join(' · '))}</div></div>
+ <div class="rec-actions"><span class="score-badge" title="적중 확률이 아닌 상대적 추천 점수">지수 ${Math.round(rec.score.score*100)}</span>
+ <a class="action-btn listen-action" href="${listenUrl(s)}" target="_blank" rel="noopener noreferrer" aria-label="${esc(s.title)} 유튜브에서 검색">듣기 ↗</a>
+ <button class="action-btn" data-action="rate-result" data-id="${s.id}" data-kind="love" type="button" title="추천에 반영하기">♥ 좋아요</button>
+ <button class="action-btn" data-action="rate-result" data-id="${s.id}" data-kind="dislike" type="button" title="추천에 반영하기">× 별로</button></div>
+ </article>`;
+}
+function renderResults() {
+ const userHistory=history();
+ const profile=buildTasteProfile(CATALOG,userHistory);
+ const recommendations=recommend(CATALOG,userHistory,[],10);
+ app.innerHTML=`<header class="results-intro"><div class="eyebrow">STEP 03 / YOUR DISCOVERY</div><h1>아직 만나지 못한<br><em>취향의 다음 장.</em></h1>
+ <p class="lead">선택과 평가를 바탕으로 추천한 곡이에요. 마음에 드는 곡과 아닌 곡을 표시하면 다음 목록에 즉시 반영됩니다.</p></header>
+ <div class="results-layout">${tasteHtml(profile)}
+   <section class="rec-section"><div class="rec-section-head"><div><h2>추천 트랙</h2><p>총 ${recommendations.length}곡 · 이미 평가한 곡은 제외</p></div><span class="alpha-chip">FOR YOU</span></div>
+   <div class="rec-list">${recommendations.length?recommendations.map(recommendationCard).join(''):'<div class="empty-results">현재 조건에서 추천 가능한 곡이 없습니다. 선택한 곡을 바꿔서 다시 시도해 주세요.</div>'}</div>
+   <div class="results-bottom"><button class="secondary-btn" type="button" data-action="back-select">선호곡 다시 선택</button><button class="secondary-btn" type="button" data-action="reset">모든 취향 데이터 초기화</button></div>
+   <div class="callout">추천 지수는 적중 확률이 아닙니다. 유사곡 외부 API, 계정 연동, 자동 음원 분석은 아직 연결되지 않았습니다.</div></section>
+ </div>`;
+}
+function render() {
+ let current=route();
+ if(current!=='select'&&session.seeds.length<5){navigate('select');return;}
+ if(current==='results'&&session.probes.length<10){navigate('probe');return;}
+ if(current==='probe'&&session.probes.length>=10){navigate('results');return;}
+ navRender(current);
+ if(current==='select')renderSelect();
+ else if(current==='probe')renderProbe();
+ else renderResults();
+}
+function updateSelect(keepSearchFocus=false) {
+ renderSelect();
+ if(keepSearchFocus){const input=document.querySelector('#song-search');input?.focus({preventScroll:true});input?.setSelectionRange(query.length,query.length);}
+}
+document.addEventListener('input', (event)=>{
+ if(event.target?.id==='song-search'){
+   query=event.target.value;
+   pageLimit=18;
+   const list=document.querySelector('#catalog-results');
+   if(list) list.innerHTML=tilesRender();
+ }
+});
+document.addEventListener('click',event=>{
+ const button=event.target.closest('[data-action]');
+ if(!button)return;
+ const {action,id,kind}=button.dataset;
+ if(action==='category'){ category=id;pageLimit=18;updateSelect();return; }
+ if(action==='more'){ pageLimit=Math.min(100,pageLimit+18);updateSelect();return; }
+ if(action==='toggle'){
+   if(session.seeds.includes(id))session.seeds=session.seeds.filter(x=>x!==id);
+   else if(session.seeds.length<10)session.seeds.push(id);
+   else { alert('최대 10곡까지 선택할 수 있어요.');return; }
+   session.probes=[]; session.feedback=[]; save();updateSelect();return;
+ }
+ if(action==='start'){
+   if(session.seeds.length>=5)navigate('probe');return;
+ }
+ if(action==='rate-probe'){
+   if(!CATALOG_IDS.has(id)||!['love','like','neutral','dislike','skip'].includes(kind))return;
+   if(session.probes.length>=10)return;
+   if(session.probes.some(r=>r.songId===id))return;
+   // Prevent forged stale clicks from recording another than the current probe.
+   const now=nextProbe(CATALOG,history());
+   if(now?.id!==id)return;
+   session.probes.push({songId:id,kind});save();
+   if(session.probes.length>=10)navigate('results');else {render();window.scrollTo({top:0,behavior:'instant'});}
+   return;
+ }
+ if(action==='rate-result'){
+   if(!CATALOG_IDS.has(id)||!['love','dislike'].includes(kind))return;
+   session.feedback=session.feedback.filter(r=>r.songId!==id);
+   session.feedback.push({songId:id,kind});save();render();return;
+ }
+ if(action==='back-select'){ navigate('select');return; }
+ if(action==='reset'){
+   if(window.confirm('선택곡과 테스트 결과를 이 브라우저에서 모두 지울까요?')){
+     session=initialSession();query='';category='all';pageLimit=18;
+     try{localStorage.removeItem(STORAGE_KEY);}catch{}
+     navigate('select');
+   }
+ }
+});
+window.addEventListener('hashchange',render);
+if(!location.hash)location.replace('#select');
+render();
+
+})();
+</script>
+</body>
+</html>

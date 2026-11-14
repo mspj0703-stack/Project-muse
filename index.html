@@ -6,8 +6,8 @@
   <meta name="theme-color" content="#11151a">
   <meta name="description" content="J-POP, 애니송, 보컬로이드, 게임 OST를 위한 음악 취향 탐색 프로토타입.">
   <title>MUSE — 내 취향을 닮은 다음 곡</title>
-  <link rel="stylesheet" href="./styles.css">
-  <script type="module" src="./app.js"></script>
+  <link rel="stylesheet" href="./styles.css" onerror="window.__museLoadFailed='styles.css'">
+  <script type="module" src="./app.js" onerror="window.__museLoadFailed='app.js'"></script>
 </head>
 <body>
   <div class="site-shell">
@@ -21,5 +21,15 @@
     <main id="app" tabindex="-1"><div class="boot">음악 카탈로그를 불러오는 중…</div></main>
     <footer class="footer"><span>MUSE · MUSIC DISCOVERY LAB</span><span>파일럿 곡 특징은 수동 임시 분류 · 실제 음원 분석이 아닙니다.</span></footer>
   </div>
+  <noscript><p style="padding:24px;font-family:sans-serif">이 사이트는 JavaScript가 필요합니다. 브라우저에서 JavaScript를 켜 주세요.</p></noscript>
+  <script>
+    // 로딩 실패 안내: 앱이 6초 안에 화면을 그리지 못하면 멈춘 채로 두지 않고 원인을 표시합니다.
+    setTimeout(function () {
+      var boot = document.querySelector('.boot');
+      if (!boot) return;
+      var what = window.__museLoadFailed ? ' (' + window.__museLoadFailed + ' 파일을 불러오지 못했어요)' : '';
+      boot.innerHTML = '앗, 화면을 불러오지 못했어요' + what + '.<br>잠시 후 새로고침해 주세요. 계속되면 배포 파일(app.js, styles.css, catalog.js, engine/dist)이 모두 올라갔는지 확인해 주세요.';
+    }, 6000);
+  </script>
 </body>
 </html>

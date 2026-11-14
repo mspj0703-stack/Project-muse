@@ -1,0 +1,16 @@
+{
+  "name": "project-muse-recommender",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Project MUSE Alpha 0.1 preference & recommendation core",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "test": "npm run build && node --test tests/*.test.mjs",
+    "demo": "npm run build && node dist/demo.js"
+  },
+  "devDependencies": {
+    "typescript": "^5.8.3"
+  },
+  "engines": { "node": ">=20" }
+}

@@ -1,0 +1,12 @@
+{
+  // Cloudflare Workers (정적 에셋 전용) 설정 — 서버 코드 없이 이 폴더의 웹 파일을 그대로 서비스합니다.
+  // Workers 대시보드의 기존 Worker 이름과 반드시 같아야 합니다. 다르면 아래 name을 바꾸세요.
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "project-muse",
+  "compatibility_date": "2025-11-01",
+  "assets": {
+    "directory": "./",
+    "html_handling": "auto-trailing-slash",
+    "not_found_handling": "none"
+  }
+}
